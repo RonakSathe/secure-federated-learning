@@ -52,7 +52,8 @@ class FLClient(fl.client.NumPyClient):
         y = data[:,-1]
 
         if len(set(y)) < 2:
-            print(" Only one class detected, skipping training...")
+            print(" Only one class detected, fixing labels...")
+            y[0] = 1 - y[0]
             return self.get_parameters(config), len(X), {}
 
         print("Training model on collected data...")
@@ -80,10 +81,15 @@ class FLClient(fl.client.NumPyClient):
         X = data[:,:-1]
         y = data[:,-1]
         
-        accuracy = model.score(X,y)
-        print(f"Evaluating model... Accuracy: {accuracy:.4f}")
-        return 0.0, len(X), {"accuracy": accuracy}
-
+        try: 
+            accuracy = model.score(X,y)
+            print(f"Evaluating model... Accuracy: {accuracy:.4f}")
+            return 0.0, len(X), {"accuracy": accuracy}
+        except Exception as e:
+            print("Error occurred while evaluating model.", e)
+            return 0.0, len(X), {"accuracy": 0.0}
+        
+        
 def start_client():
     print("Starting FL client...")
     fl.client.start_numpy_client(
