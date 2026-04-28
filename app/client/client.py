@@ -1,14 +1,14 @@
+CLIENT_ID = 0
 import flwr as fl
 import numpy as np
 import time
 import random
-
 from app.models.model import get_model
 from app.client.data_collector import collect_data
 from app.client.trainer import label_data
 from app.client.security import encrypt_params,decrypt_params
 from app.utils.config import SERVER_ADDRESS
-from app.client.secure_agg import apply_mask, remove_mask
+from app.client.secure_agg import apply_mask
 
 
 model = get_model()
@@ -28,14 +28,11 @@ class FLClient(fl.client.NumPyClient):
         print("Getting parameters from server...")
         params = [model.coef_.copy(), model.intercept_.copy()]
         # return [encrypt_params(params)]
-        return apply_mask(params)
+        return apply_mask(params, CLIENT_ID)
     
     def set_parameters(self,parameters):
-        print("Received parameters from servers...[ENCRYPTED]")
-        # model.coef_,model.intercept_ = decrypt_params(parameters[0])
-        # print("Parameters updated successfully.")
-        params = remove_mask(parameters)
-        model.coef_,model.intercept_ = params
+        print("Received parameters from servers...")
+        model.coef_,model.intercept_ = parameters
     
     def fit(self,parameters,config):
         self.set_parameters(parameters)
