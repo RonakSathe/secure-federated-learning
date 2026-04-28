@@ -72,23 +72,32 @@ class FLClient(fl.client.NumPyClient):
         return self.get_parameters(config), len(X), {}
     
     def evaluate(self,parameters,config):
-        self.set_parameters(parameters)
+        try:
+            self.set_parameters(parameters)
+        except Exception as e:
+            print("parameter load error:", e)
+            return 0.0, 1, {"accuracy": 0.0}
 
         if len(data_buffer) == 0:
             return 0.0, 1, {"accuracy": 0.0}
         
         data = np.array(data_buffer)
         X = data[:,:-1]
-        y = data[:,-1]
+        y = data[:, -1]
         
-        try: 
-            accuracy = model.score(X,y)
-            print(f"Evaluating model... Accuracy: {accuracy:.4f}")
-            return 0.0, len(X), {"accuracy": accuracy}
-        except Exception as e:
-            print("Error occurred while evaluating model.", e)
+        # 🔥 Shape safety check
+        if X.shape[1] != model.coef_.shape[1]:
+            print("⚠️ Shape mismatch, skipping evaluation")
             return 0.0, len(X), {"accuracy": 0.0}
-        
+    
+        try:
+            accuracy = model.score(X, y)
+            print(f"📊 Accuracy: {accuracy:.4f}")
+            return 0.0, len(X), {"accuracy": accuracy}
+    
+        except Exception as e:
+            print("⚠️ Evaluation error:", e)
+            return 0.0, len(X), {"accuracy": 0.0}
         
 def start_client():
     print("Starting FL client...")
