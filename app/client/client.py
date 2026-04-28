@@ -28,7 +28,8 @@ class FLClient(fl.client.NumPyClient):
         print("Getting parameters from server...")
         params = [model.coef_.copy(), model.intercept_.copy()]
         # return [encrypt_params(params)]
-        return apply_mask(params, CLIENT_ID)
+        # return apply_mask(params, CLIENT_ID)
+        return [model.coef_,model.intercept_]
     
     def set_parameters(self,parameters):
         print("Received parameters from servers...")
@@ -54,22 +55,27 @@ class FLClient(fl.client.NumPyClient):
         if len(set(y)) < 2:
             print(" Only one class detected, fixing labels...")
             y[0] = 1 - y[0]
-            return self.get_parameters(config), len(X), {}
-
+            
         print("Training model on collected data...")
         model.fit(X,y)
 
+        #Poisioning attack simulation
         if random.random() < 0.3:
             print("Malicious client !!! Injecting noise....")
             model.coef *= np.random.uniform(0.5,1.5,size=model.coef_.shape)
-            model.intercept *= np.random.uniform(0.5,1.5,size=model.intercept_.shape)
-        
+            model.intercept *= np.random.uniform(0.5,1.5,size=model.intercept_.shape) 
         new_params = [model.coef_, model.intercept_]
+
         if is_suspicious(old_params,new_params):
             print("Suspicious update detected! Aborting...")
-            return self.get_parameters(config), len(X), {}
+            safe_params = old_params
+            return apply_mask(safe_params, CLIENT_ID), len(X), {}
+        
         print("Update accepted. Sending parameters to server...")
-        return self.get_parameters(config), len(X), {}
+
+        params = [model.coef_.copy(), model.intercept_.copy()]
+        masked_params = apply_mask(params, CLIENT_ID)
+        return masked_params, len(X), {}
     
     def evaluate(self,parameters,config):
         try:
@@ -89,12 +95,12 @@ class FLClient(fl.client.NumPyClient):
         if X.shape[1] != model.coef_.shape[1]:
             print("⚠️ Shape mismatch, skipping evaluation")
             return 0.0, len(X), {"accuracy": 0.0}
-    
+
         try:
             accuracy = model.score(X, y)
             print(f"📊 Accuracy: {accuracy:.4f}")
             return 0.0, len(X), {"accuracy": accuracy}
-    
+
         except Exception as e:
             print("⚠️ Evaluation error:", e)
             return 0.0, len(X), {"accuracy": 0.0}
