@@ -8,6 +8,8 @@ from app.client.data_collector import collect_data
 from app.client.trainer import label_data
 from app.client.security import encrypt_params,decrypt_params
 from app.utils.config import SERVER_ADDRESS
+from app.client.secure_agg import apply_mask, remove_mask
+
 
 model = get_model()
 data_buffer = []
@@ -24,15 +26,16 @@ class FLClient(fl.client.NumPyClient):
 
     def get_parameters(self,config):
         print("Getting parameters from server...")
-        # params = [model.coef_.copy(), model.intercept_.copy()]
+        params = [model.coef_.copy(), model.intercept_.copy()]
         # return [encrypt_params(params)]
-        return [model.coef_,model.intercept_]
+        return apply_mask(params)
     
     def set_parameters(self,parameters):
         print("Received parameters from servers...[ENCRYPTED]")
         # model.coef_,model.intercept_ = decrypt_params(parameters[0])
         # print("Parameters updated successfully.")
-        model.coef_,model.intercept_ = parameters
+        params = remove_mask(parameters)
+        model.coef_,model.intercept_ = params
     
     def fit(self,parameters,config):
         self.set_parameters(parameters)
