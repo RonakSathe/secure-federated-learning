@@ -27,13 +27,28 @@ class FLClient(fl.client.NumPyClient):
     def get_parameters(self,config):
         print("Getting parameters from server...")
         params = [model.coef_.copy(), model.intercept_.copy()]
-        # return [encrypt_params(params)]
-        # return apply_mask(params, CLIENT_ID)
-        return [model.coef_,model.intercept_]
+        masked_coef,masked_intercept = apply_mask(params, CLIENT_ID)
+        return [masked_coef, masked_intercept]
     
     def set_parameters(self,parameters):
+        if len(parameters) != 2:
+            print(f"Unexpected pamaeter count: {len(parameters)}")
+            return
+
+        coef, intercept = parameters
+        coef = np.asarray(coef).reshape(model.coef_.shape)
+        intercept = np.asarray(intercept).reshape(model.intercept_.shape)
+        
+        print(f"coef shape: {coef.shape}, intercept shape: {intercept.shape}")
+        
+        if coef.shape != model.coef_.shape or intercept.shape != model.intercept_.shape:
+            print("Shape mismatch in received parameters, skipping evaluation")
+            return
+        
         print("Received parameters from servers...")
-        model.coef_,model.intercept_ = parameters
+        model.coef_ = coef
+        model.intercept_ = intercept
+        
     
     def fit(self,parameters,config):
         self.set_parameters(parameters)
@@ -62,20 +77,20 @@ class FLClient(fl.client.NumPyClient):
         #Poisioning attack simulation
         if random.random() < 0.3:
             print("Malicious client !!! Injecting noise....")
-            model.coef *= np.random.uniform(0.5,1.5,size=model.coef_.shape)
-            model.intercept *= np.random.uniform(0.5,1.5,size=model.intercept_.shape) 
+            model.coef_ *= np.random.uniform(0.5,1.5,size=model.coef_.shape)
+            model.intercept_ *= np.random.uniform(0.5,1.5,size=model.intercept_.shape) 
         new_params = [model.coef_, model.intercept_]
 
         if is_suspicious(old_params,new_params):
             print("Suspicious update detected! Aborting...")
             safe_params = old_params
-            return apply_mask(safe_params, CLIENT_ID), len(X), {}
+            masked_coef,masked_intercept = apply_mask(safe_params, CLIENT_ID)
+            return [masked_coef, masked_intercept], len(X), {}
         
         print("Update accepted. Sending parameters to server...")
-
         params = [model.coef_.copy(), model.intercept_.copy()]
-        masked_params = apply_mask(params, CLIENT_ID)
-        return masked_params, len(X), {}
+        masked_coef, masked_intercept = apply_mask(params, CLIENT_ID)
+        return [masked_coef, masked_intercept], len(X), {}
     
     def evaluate(self,parameters,config):
         try:
