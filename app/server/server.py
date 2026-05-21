@@ -43,6 +43,7 @@ class SaveMetricsStrategy(fl.server.strategy.FedAvg):
         #FedAvg aggregate loss;  we compute accuracy ourselves
         aggregated = super().aggregate_evaluate(server_round, results, failures)
         loss_aggregated = 0.0
+        accuracy_aggregated = 0.0
         if aggregated is not None:
             loss_aggregated,_ = aggregated
         
@@ -80,17 +81,24 @@ class SaveMetricsStrategy(fl.server.strategy.FedAvg):
                 status = "Attack Detected"
             elif client_trust < 0.25:
                 status = "Low Trust Client"
-            writer.writerow([server_round, loss_aggregated, accuracy_aggregated, update_magnitude, attack_flag, client_trust, status])
+            writer.writerow([server_round,
+                            loss_aggregated,
+                            accuracy_aggregated,
+                            update_magnitude,
+                            attack_flag,
+                            client_trust,
+                            status,
+                            ])
 
-        writer.writerow([
-            server_round,
-            loss_aggregated,
-            accuracy_aggregated,
-            update_magnitude,
-            attack_flag,
-            client_trust,
-            status
-        ])
+            writer.writerow([
+                server_round,
+                loss_aggregated,
+                accuracy_aggregated,
+                update_magnitude,
+                attack_flag,
+                client_trust,
+                status
+                ])
 
         print(f"\n\nRound: {server_round} - Loss: {loss_aggregated:.4f}, Accuracy: {accuracy_aggregated:.2%}, Update Mag: {update_magnitude:.4f}, Attack Flag: {attack_flag:.2f}, Client Trust: {client_trust:.2f}, Status: {status}")
         return aggregated
