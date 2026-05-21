@@ -1,4 +1,4 @@
-CLIENT_ID = 0
+CLIENT_ID = 1
 import flwr as fl
 import numpy as np
 import time
@@ -136,7 +136,7 @@ class FLClient(fl.client.NumPyClient):
             print("⚠️ Evaluation error:", e)
             return 0.0, len(X), {"accuracy": 0.0}
         
-def start_client():
+def start_client_1():
     print("Starting FL client...")
     fl.client.start_numpy_client(
         server_address=SERVER_ADDRESS,

@@ -11,7 +11,14 @@ def load_metrics() -> pd.DataFrame:
     if LOG_PATH.exists():
         return pd.read_csv(LOG_PATH)
     else:
-        return pd.DataFrame(columns=["round", "loss", "accuracy"])
+        return pd.DataFrame(columns=["round",
+                                      "loss",
+                                        "accuracy",
+                                        "update_magnitude",
+                                        "attack_flag",
+                                        "client_trust",
+                                        "status",
+                                        ])
 
 @st.fragment(run_every=2)
 def live_dashboard():
@@ -29,13 +36,22 @@ def live_dashboard():
 
     left,right = st.columns(2)
     with left:
-        st.subheader("Accuracy by Round")
+        st.subheader("accuracy")
         st.line_chart(df.set_index("round")[["accuracy"]])
+
+        st.subheader("Client Trust by Round")
+        st.line_chart(df.set_index("round")[["client_trust"]])
     
     with right:
         st.subheader("Loss by Round")
         st.line_chart(df.set_index("round")[["loss"]])
-    
+
+        st.subheader("Update Magnitude by Round")
+        st.line_chart(df.set_index("round")[["update_magnitude"]])
+
+    st.subheader("Attack Flag by Round")
+    st.line_chart(df.set_index("round")[["attack_flag"]])
+            
     st.subheader("Recent Metrics Table")
     st.dataframe(df.tail(10),use_container_width=True)
 
