@@ -49,6 +49,13 @@ def live_dashboard():
         st.subheader("Update Magnitude by Round")
         st.line_chart(df.set_index("round")[["update_magnitude"]])
 
+    latest = df.iloc[-1]
+    if latest["client_trust"] < 0.25:
+        st.error("Low trust client detected - update blocked")
+    elif latest["attack_flag"] == 1:
+        st.warning("Potential attack detected - update flagged for review")
+    else: st.success("Client update looks good")
+
     st.subheader("Attack Flag by Round")
     st.line_chart(df.set_index("round")[["attack_flag"]])
 

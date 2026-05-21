@@ -9,7 +9,7 @@ from app.client.trainer import label_data
 from app.client.security import encrypt_params,decrypt_params
 from app.utils.config import SERVER_ADDRESS
 from app.client.secure_agg import apply_mask
-
+from sklearn.metrics import log_loss
 
 model = get_model()
 data_buffer = []
@@ -156,9 +156,11 @@ class FLClient(fl.client.NumPyClient):
             return 0.0, len(X), {"accuracy": 0.0}
 
         try:
+            y_pred_proba = model.predict_proba(X)
+            loss = log_loss(y, y_pred_proba)
             accuracy = model.score(X, y)
             print(f"📊 Accuracy: {accuracy:.4f}")
-            return 0.0, len(X), {"accuracy": float(accuracy)}
+            return float(loss), len(X), {"accuracy": float(accuracy)}
 
         except Exception as e:
             print("⚠️ Evaluation error:", e)
