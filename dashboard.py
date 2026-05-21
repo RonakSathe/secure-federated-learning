@@ -51,8 +51,14 @@ def live_dashboard():
 
     st.subheader("Attack Flag by Round")
     st.line_chart(df.set_index("round")[["attack_flag"]])
-            
+
+    st.subheader("Client Trust")
+    st.bar_chart(df.set_index("round")[["client_trust"]])
+
     st.subheader("Recent Metrics Table")
     st.dataframe(df.tail(10),use_container_width=True)
+
+
+
 
 live_dashboard()

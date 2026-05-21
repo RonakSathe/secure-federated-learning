@@ -13,6 +13,8 @@ from app.client.secure_agg import apply_mask
 
 model = get_model()
 data_buffer = []
+client_trust = 1.0
+trust_history = []
 
 def is_suspicious(old_params,new_params,threshold=5.0):
     old_coef,old_intercept = old_params
@@ -22,6 +24,18 @@ def is_suspicious(old_params,new_params,threshold=5.0):
     print(f"Update magnitude: {diff:.4f}")
     return diff > threshold
 
+def update_trust(is_attack: int, magnitude: float)->float:
+    global client_trust
+
+    if is_attack == 1:
+        client_trust -= 0.25
+    elif magnitude >1.0:
+        client_trust -= 0.10
+    else:
+        client_trust += 0.05
+    client_trust = max(0.0, min(1.0, client_trust))
+    trust_history.append(client_trust)
+    return client_trust
 class FLClient(fl.client.NumPyClient):
 
     def get_parameters(self,config):
@@ -87,6 +101,20 @@ class FLClient(fl.client.NumPyClient):
             client_trust = 0.3
         new_params = [model.coef_, model.intercept_]
         update_magnitude = (np.linalg.norm(new_params[0]-old_params[0])+np.linalg.norm(new_params[1]-old_params[1]))
+        client_trust_value = update_trust(attack_flag, update_magnitude)
+
+        if client_trust_value < 0.25:
+            print("Client Blocked due to low trust score")
+            safe_params = old_params
+            masked_coef,masked_intercept = apply_mask(safe_params, CLIENT_ID)
+            return [masked_coef, masked_intercept], len(X), {
+                "attack_flag": attack_flag,
+                "update_magnitude": float(update_magnitude),
+                "client_trust": float(client_trust_value),
+                "status": "blocked"
+            }
+        
+
         if is_suspicious(old_params,new_params):
             print("Suspicious update detected! Aborting...")
             attack_flag = 1
@@ -96,7 +124,7 @@ class FLClient(fl.client.NumPyClient):
             return [masked_coef, masked_intercept], len(X), {
                 "attack_flag": attack_flag,
                 "update_magnitude": float(update_magnitude),
-                "client_trust": client_trust,
+                "client_trust": float(client_trust_value),
             }
         
         print("Update accepted. Sending parameters to server...")
@@ -105,7 +133,7 @@ class FLClient(fl.client.NumPyClient):
         return [masked_coef, masked_intercept], len(X), {
             "attack_flag": attack_flag,
             "update_magnitude": float(update_magnitude),
-            "client_trust": client_trust,
+            "client_trust": float(client_trust_value),
         }
     
     def evaluate(self,parameters,config):
