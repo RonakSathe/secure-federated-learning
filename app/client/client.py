@@ -9,7 +9,7 @@ from app.client.trainer import label_data
 from app.client.security import encrypt_params,decrypt_params
 from app.utils.config import SERVER_ADDRESS
 from app.client.secure_agg import apply_mask
-from sklearn.metrics import log_loss
+from sklearn.metrics import log_loss, accuracy_score
 
 model = get_model()
 data_buffer = []
@@ -148,7 +148,7 @@ class FLClient(fl.client.NumPyClient):
         
         data = np.array(data_buffer)
         X = data[:,:-1]
-        y = data[:, -1]
+        y = data[:, -1].astype(int)
         
         # 🔥 Shape safety check
         if X.shape[1] != model.coef_.shape[1]:
@@ -156,9 +156,17 @@ class FLClient(fl.client.NumPyClient):
             return 0.0, len(X), {"accuracy": 0.0}
 
         try:
-            y_pred_proba = model.predict_proba(X)
-            loss = log_loss(y, y_pred_proba)
-            accuracy = model.score(X, y)
+
+            y_pred  = model.predict(X)
+            accuracy = accuracy_score(y, y_pred)
+
+            #If one class exists in y, log_loss needs explicit labels
+            if len(np.unique(y)) < 2:
+                loss = 0.0
+            else: 
+                y_pred_proba = model.predict_proba(X)
+                loss = log_loss(y, y_pred_proba,labels=[0,1])
+            
             print(f"📊 Accuracy: {accuracy:.4f}")
             return float(loss), len(X), {"accuracy": float(accuracy)}
 
