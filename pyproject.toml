@@ -1,0 +1,32 @@
+[project]
+name = "secure-federated-learning"
+version = "1.0.0"
+description = "Secure federated learning for cybersecurity monitoring"
+license = "Apache-2.0"
+dependencies = [
+    "flwr[simulation]>=1.30.0",
+    "numpy>=2.0.2",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.4.0",
+    "psutil>=5.9.0",
+    "streamlit>=1.30.0",
+]
+
+[tool.flwr.app]
+publisher = "RonakSathe"
+fab-include = [
+    "secaggexample/**/*.py",
+    "app/**/*.py",
+    "main_client.py",
+    "main_server.py"
+]
+
+[tool.flwr.app.components]
+serverapp = "secaggexample.server_app:app"
+clientapp = "secaggexample.client_app:app"
+
+[tool.flwr.app.config]
+num-server-rounds = 10
+num-shares = 4
+reconstruction-threshold = 2
+is-demo = true
