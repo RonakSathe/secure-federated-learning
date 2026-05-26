@@ -1,11 +1,80 @@
+from __future__ import annotations
+import warnings
+from flwr.app import ArrayRecord,Context,Message,MetricRecord,RecordDict
 from flwr.client import ClientApp
-from flwr.client.mod import secaggplus_mod
-from flwr.common import Context
 
-from secaggexample.task import create_client
+from .task import *
 
-def client_fn(context:Context):
-    partition_id = int(context.node_config.get("partition-id",0))
-    return create_client(partition_id).to_client()
+app = ClientApp()
 
-app = ClientApp(client_fn=client_fn,mods=[secaggplus_mod])
+@app.train()
+def train(msg: Message, context: Context):
+
+    # Create fresh local model
+    model = build_model()
+
+    # Get parameters sent from server
+    parameters = msg.content["arrays"].to_numpy_ndarrays()
+
+    # Load parameters into model
+    set_parameters(model, parameters)
+
+    # Collect local telemetry
+    df = collect_batch()
+
+    X, y = dataframe_to_xy(df)
+
+    # Train locally
+    train_model(model, X, y)
+
+    # Return updated parameters
+    content = RecordDict(
+        {
+            "arrays": ArrayRecord(
+                get_parameters(model)
+            ),
+            "metrics": MetricRecord(
+                {
+                    "num-examples": len(X),
+                }
+            ),
+        }
+    )
+
+    return Message(
+        content=content,
+        reply_to=msg,
+    )
+
+
+@app.evaluate()
+def evaluate(msg: Message, context: Context):
+
+    model = build_model()
+
+    parameters = msg.content["arrays"].to_numpy_ndarrays()
+
+    set_parameters(model, parameters)
+
+    df = collect_batch()
+
+    X, y = dataframe_to_xy(df)
+
+    loss, accuracy = evaluate_model(model, X, y)
+
+    content = RecordDict(
+        {
+            "metrics": MetricRecord(
+                {
+                    "loss": float(loss),
+                    "accuracy": float(accuracy),
+                    "num-examples": len(X),
+                }
+            )
+        }
+    )
+
+    return Message(
+        content=content,
+        reply_to=msg,
+    )
