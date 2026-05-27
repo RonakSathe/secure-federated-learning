@@ -1,80 +1,58 @@
 from __future__ import annotations
 import warnings
-from flwr.app import ArrayRecord,Context,Message,MetricRecord,RecordDict
-from flwr.client import ClientApp
-
+from flwr.client import ClientApp,NumPyClient
+from flwr.common import Context
+app = ClientApp()
 from .task import *
 
-app = ClientApp()
 
-@app.train()
-def train(msg: Message, context: Context):
+class IDSClient(NumPyClient):
 
-    # Create fresh local model
-    model = build_model()
+    def __init__(self):
+        self.model = build_model()
 
-    # Get parameters sent from server
-    parameters = msg.content["arrays"].to_numpy_ndarrays()
+    def get_parameters(self, config):
+        return get_parameters(self.model)
 
-    # Load parameters into model
-    set_parameters(model, parameters)
+    def fit(self, parameters, config):
 
-    # Collect local telemetry
-    df = collect_batch()
+        set_parameters(self.model, parameters)
 
-    X, y = dataframe_to_xy(df)
+        df = collect_batch()
 
-    # Train locally
-    train_model(model, X, y)
+        X, y = dataframe_to_xy(df)
 
-    # Return updated parameters
-    content = RecordDict(
-        {
-            "arrays": ArrayRecord(
-                get_parameters(model)
-            ),
-            "metrics": MetricRecord(
-                {
-                    "num-examples": len(X),
-                }
-            ),
-        }
-    )
+        train_model(self.model, X, y)
 
-    return Message(
-        content=content,
-        reply_to=msg,
-    )
+        return (
+            get_parameters(self.model),
+            len(X),
+            {},
+        )
+
+    def evaluate(self, parameters, config):
+
+        set_parameters(self.model, parameters)
+
+        df = collect_batch()
+
+        X, y = dataframe_to_xy(df)
+
+        loss, accuracy = evaluate_model(
+            self.model,
+            X,
+            y,
+        )
+
+        return (
+            float(loss),
+            len(X),
+            {"accuracy": float(accuracy)},
+        )
 
 
-@app.evaluate()
-def evaluate(msg: Message, context: Context):
+def client_fn(context: Context):
+    return IDSClient().to_client()
 
-    model = build_model()
 
-    parameters = msg.content["arrays"].to_numpy_ndarrays()
-
-    set_parameters(model, parameters)
-
-    df = collect_batch()
-
-    X, y = dataframe_to_xy(df)
-
-    loss, accuracy = evaluate_model(model, X, y)
-
-    content = RecordDict(
-        {
-            "metrics": MetricRecord(
-                {
-                    "loss": float(loss),
-                    "accuracy": float(accuracy),
-                    "num-examples": len(X),
-                }
-            )
-        }
-    )
-
-    return Message(
-        content=content,
-        reply_to=msg,
-    )
+app = ClientApp(client_fn=client_fn)
