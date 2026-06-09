@@ -1,80 +1,48 @@
-from __future__ import annotations
-import warnings
-from flwr.app import ArrayRecord,Context,Message,MetricRecord,RecordDict
-from flwr.client import ClientApp
+import flwr as fl
+from flwr.client import ClientApp,NumPyClient
+from flwr.client.mod import secaggplus_mod
+from . import task
 
-from .task import *
+class SecurtiyClient(NumPyClient):
+    def __init__(self):
+        #innitialize our local scikit-learn model shell
+        self.model = task.build_model()
+    
+    def fit(self,parameters,config):
+        #update local model with global parameters form the server
+        task.set_parameters(self.model,parameters)
 
-app = ClientApp()
+        #collect the fresh live batch of th  system metrics
+        print("[CLIENT]  COllecting real-time system metrics for training........")
+        df_train = task.collect_batch(sample_size=50)
+        X,y = task.dataframe_to_xy(df_train)
 
-@app.train()
-def train(msg: Message, context: Context):
+        #Train the model
+        task.train_model(self.model, X, y)
 
-    # Create fresh local model
-    model = build_model()
+        #Extract the updated weights to send back
+        updated_params = task.get_parameters(self.model)
+        return updated_params, len(X), {}
+    
+    def evaluate(self,parameters,config):
+        #Update paramters to evaluate the largest global model
+        task.set_parameters(self.model,parameters)
+                            
+        #Collect evaluation metrics
+        df_test = task.collect_batch(samples_size=20)
+        X,y = task.dataframe_to_xy(df_test)
 
-    # Get parameters sent from server
-    parameters = msg.content["arrays"].to_numpy_ndarrays()
+        loss,accuracy = task.evaluate_model(self.model, X, y)
+        print(f"[CLIENT] Evaluation results - Loss: {loss}, Accuracy: {accuracy}")
 
-    # Load parameters into model
-    set_parameters(model, parameters)
-
-    # Collect local telemetry
-    df = collect_batch()
-
-    X, y = dataframe_to_xy(df)
-
-    # Train locally
-    train_model(model, X, y)
-
-    # Return updated parameters
-    content = RecordDict(
-        {
-            "arrays": ArrayRecord(
-                get_parameters(model)
-            ),
-            "metrics": MetricRecord(
-                {
-                    "num-examples": len(X),
-                }
-            ),
-        }
-    )
-
-    return Message(
-        content=content,
-        reply_to=msg,
-    )
-
-
-@app.evaluate()
-def evaluate(msg: Message, context: Context):
-
-    model = build_model()
-
-    parameters = msg.content["arrays"].to_numpy_ndarrays()
-
-    set_parameters(model, parameters)
-
-    df = collect_batch()
-
-    X, y = dataframe_to_xy(df)
-
-    loss, accuracy = evaluate_model(model, X, y)
-
-    content = RecordDict(
-        {
-            "metrics": MetricRecord(
-                {
-                    "loss": float(loss),
-                    "accuracy": float(accuracy),
-                    "num-examples": len(X),
-                }
-            )
-        }
-    )
-
-    return Message(
-        content=content,
-        reply_to=msg,
+        return float(loss), len(X), {"accuracy": float(accuracy)}
+    
+def client_fn(context):
+    print("[CLIENT] Starting client with context:", context)
+    return SecurtiyClient().to_client()
+    
+#Create the ClientApp
+app = ClientApp(
+    client_fn=client_fn,
+    mods=[secaggplus_mod]
     )
