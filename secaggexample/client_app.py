@@ -1,58 +1,48 @@
-from __future__ import annotations
-import warnings
+import flwr as fl
 from flwr.client import ClientApp,NumPyClient
-from flwr.common import Context
-app = ClientApp()
-from .task import *
+from flwr.client.mod import secaggplus_mod
+from . import task
 
-
-class IDSClient(NumPyClient):
-
+class SecurtiyClient(NumPyClient):
     def __init__(self):
-        self.model = build_model()
+        #innitialize our local scikit-learn model shell
+        self.model = task.build_model()
+    
+    def fit(self,parameters,config):
+        #update local model with global parameters form the server
+        task.set_parameters(self.model,parameters)
 
-    def get_parameters(self, config):
-        return get_parameters(self.model)
+        #collect the fresh live batch of th  system metrics
+        print("[CLIENT]  COllecting real-time system metrics for training........")
+        df_train = task.collect_batch(sample_size=50)
+        X,y = task.dataframe_to_xy(df_train)
 
-    def fit(self, parameters, config):
+        #Train the model
+        task.train_model(self.model, X, y)
 
-        set_parameters(self.model, parameters)
+        #Extract the updated weights to send back
+        updated_params = task.get_parameters(self.model)
+        return updated_params, len(X), {}
+    
+    def evaluate(self,parameters,config):
+        #Update paramters to evaluate the largest global model
+        task.set_parameters(self.model,parameters)
+                            
+        #Collect evaluation metrics
+        df_test = task.collect_batch(samples_size=20)
+        X,y = task.dataframe_to_xy(df_test)
 
-        df = collect_batch()
+        loss,accuracy = task.evaluate_model(self.model, X, y)
+        print(f"[CLIENT] Evaluation results - Loss: {loss}, Accuracy: {accuracy}")
 
-        X, y = dataframe_to_xy(df)
-
-        train_model(self.model, X, y)
-
-        return (
-            get_parameters(self.model),
-            len(X),
-            {},
-        )
-
-    def evaluate(self, parameters, config):
-
-        set_parameters(self.model, parameters)
-
-        df = collect_batch()
-
-        X, y = dataframe_to_xy(df)
-
-        loss, accuracy = evaluate_model(
-            self.model,
-            X,
-            y,
-        )
-
-        return (
-            float(loss),
-            len(X),
-            {"accuracy": float(accuracy)},
-        )
-
-
-def client_fn(context: Context):
-    return IDSClient().to_client()
-
-
-app = ClientApp(client_fn=client_fn)
+        return float(loss), len(X), {"accuracy": float(accuracy)}
+    
+def client_fn(context):
+    print("[CLIENT] Starting client with context:", context)
+    return SecurtiyClient().to_client()
+    
+#Create the ClientApp
+app = ClientApp(
+    client_fn=client_fn,
+    mods=[secaggplus_mod]
+    )
