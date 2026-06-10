@@ -1,0 +1,6 @@
+{
+    "round": 1,
+    "accuracy": 0.85,
+    "loss": 0.25,
+    "clients": 3
+}

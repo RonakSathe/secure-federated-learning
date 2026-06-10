@@ -1,48 +1,104 @@
-import flwr as fl
-from flwr.client import ClientApp,NumPyClient
-from flwr.client.mod import secaggplus_mod
-from . import task
+from flwr.clientapp import ClientApp
+import numpy as np
+from flwr.app import (
+    Message,
+    Context,
+    RecordDict,ArrayRecord,MetricRecord,
+)
+from .task import *
 
-class SecurtiyClient(NumPyClient):
-    def __init__(self):
-        #innitialize our local scikit-learn model shell
-        self.model = task.build_model()
+#Trainig data
+
+app = ClientApp()
+
+
+@app.train()
+def train(msg:Message,context:Context):
+    model = build_model()
+    arrays = msg.content["arrays"]
+
+    #getting the partition id or client_id 
+    partition_id = context.node_config["partition-id"]
+
+    #Creating one Malicious client for the test: unnatural behavious
+    if partition_id == 2:
+        model.coef_ *= 100
+
+    paramters = arrays.to_numpy_ndarrays()
+    set_parameters(model, paramters)
+
+    df = collect_batch(partition_id=partition_id)
+    X,y = dataframe_to_xy(df)
     
-    def fit(self,parameters,config):
-        #update local model with global parameters form the server
-        task.set_parameters(self.model,parameters)
-
-        #collect the fresh live batch of th  system metrics
-        print("[CLIENT]  COllecting real-time system metrics for training........")
-        df_train = task.collect_batch(sample_size=50)
-        X,y = task.dataframe_to_xy(df_train)
-
-        #Train the model
-        task.train_model(self.model, X, y)
-
-        #Extract the updated weights to send back
-        updated_params = task.get_parameters(self.model)
-        return updated_params, len(X), {}
     
-    def evaluate(self,parameters,config):
-        #Update paramters to evaluate the largest global model
-        task.set_parameters(self.model,parameters)
-                            
-        #Collect evaluation metrics
-        df_test = task.collect_batch(samples_size=20)
-        X,y = task.dataframe_to_xy(df_test)
+    old_params = get_parameters(model)
+    print(f"old params: {old_params}")
+    train_model(model,X,y)
+    new_params = get_parameters(model)
+    print(f"new params: {new_params}")
+    loss,acc = evaluate_model(model,X,y)
 
-        loss,accuracy = task.evaluate_model(self.model, X, y)
-        print(f"[CLIENT] Evaluation results - Loss: {loss}, Accuracy: {accuracy}")
 
-        return float(loss), len(X), {"accuracy": float(accuracy)}
+    #Computing the Delta: the Change==========================================================
+    delta = np.linalg.norm(new_params[0]-old_params[0])
+    print(f"\n\n Partition: {partition_id}")
+    print(f"\n Weight Change:  the delta is: {delta}")
+
+    print("\n After TRAINING")
+    print(model.coef_)
+    print(model.intercept_)
+
+    #Adding a clipping 
+    #1: It acts as first defense used in production FL systems
+    coef_norm = np.linalg.norm(model.coef_)
+    if coef_norm > 10:
+        model.coef_ = model.coef_ *(10/coef_norm)
+
+
+    updated = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
+
+    metrics = MetricRecord({
+        "num-examples": len(X),
+        "partition-id": partition_id,
+        "train_loss": float(loss),
+        "train_accuracy": float(acc),
+    })
+
+    print(f"Model Coefficient: {model.coef_}")
+    print(f"Model Intercept: {model.intercept_}")
+
+    content = RecordDict({
+        "arrays": updated,
+        "metrics": metrics,
+    })
+    print("===========================================CLIENT TRAINING STTARTED====================================================================")
+    return Message(content=content,
+                   reply_to=msg,
+                   )
+
+@app.evaluate()
+def evaluate(msg:Message,context:Context):
+    model = build_model()
+    arrays = msg.content["arrays"]
     
-def client_fn(context):
-    print("[CLIENT] Starting client with context:", context)
-    return SecurtiyClient().to_client()
+    #getting the partition id or client_id 
+    partition_id = context.node_config["partition-id"]
+
+    parameters = arrays.to_numpy_ndarrays()
+    set_parameters(model, parameters)
+
+    df = collect_batch(partition_id=partition_id)
+    X,y = dataframe_to_xy(df)
+    loss,acc = evaluate_model(model,X,y)
     
-#Create the ClientApp
-app = ClientApp(
-    client_fn=client_fn,
-    mods=[secaggplus_mod]
-    )
+    metrics = MetricRecord({
+        "loss": float(loss),
+        "accuracy": float(acc),
+        "num-examples": len(X),
+    })
+
+    content = RecordDict({
+        "metrics": metrics,
+    })
+    print("=============================================================CLIENT EVALUATION STARTED================================================================")
+    return Message(content=content,reply_to=msg)

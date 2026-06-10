@@ -5,28 +5,24 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "secure-federated-learning"
 version = "0.1.0"
-dependencies = [
-    "flwr[simulation]>=1.13.0"
-]
 description = "A secure federated learning project using SecAgg"
 license = "Apache-2.0"
-
-[tool.hatch.build.targets.wheel]
-packages = ["secure_federated_learning"]
+dependencies = [
+    "flwr[simulation]>=1.30.0"
+]
 
 [tool.flwr.app]
 program = "secaggexample.server_app:app"
+publisher = "ronak"
+
+# Add or update this section to tell the framework to run SecAgg natively:
+[tool.flwr.app.components]
+serverapp = "secaggexample.server_app:app"
+clientapp = "secaggexample.client_app:app"
 
 [tool.flwr.federation]
 default = "local-simulation"
 
+
 [tool.flwr.federation.simulations.local-simulation]
 options.num-supernodes = 3
-
-# Add or update this section to tell the framework to run SecAgg natively:
-[tool.flwr.federation.components]
-serverapp = "secaggexample.server_app:app"
-clientapp = "secaggexample.client_app:app"
-
-[tool.flwr.federation.workflow]
-name = "secagg+"
