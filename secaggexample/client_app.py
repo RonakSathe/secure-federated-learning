@@ -1,48 +1,65 @@
-import flwr as fl
-from flwr.client import ClientApp,NumPyClient
-from flwr.client.mod import secaggplus_mod
-from . import task
+from flwr.clientapp import ClientApp
+from flwr.app import (
+    Message,
+    Context,
+    RecordDict,ArrayRecord,MetricRecord,
+)
+from .task import *
 
-class SecurtiyClient(NumPyClient):
-    def __init__(self):
-        #innitialize our local scikit-learn model shell
-        self.model = task.build_model()
+#Trainig data
+
+app = ClientApp()
+
+
+@app.train()
+def train(msg:Message,context:Context):
+
+    model = build_model()
+
+    arrays = msg.content["arrays"]
+
+    paramters = arrays.to_numpy_ndarrays()
+    set_parameters(model, paramters)
+
+    df = collect_batch()
+    X,y = dataframe_to_xy(df)
+
+    train_model(model,X,y)
+
+    updated = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
+
+    metrics = MetricRecord({
+        "num-examples": len(X)
+    })
+
+    content = RecordDict({
+        "arrays": updated,
+        "metrics": metrics,
+    })
+    return Message(content=content,
+                   reply_to=msg,
+                   )
+
+@app.evaluate()
+def evaluate(msg:Message,context:Context):
+    model = build_model()
+    arrays = msg.content["arrays"]
+
+    parameters = arrays.to_numpy_ndarrays()
+    set_parameters(model, parameters)
+
+    df = collect_batch()
+    X,y = dataframe_to_xy(df)
+    loss,acc = evaluate_model(model,X,y)
     
-    def fit(self,parameters,config):
-        #update local model with global parameters form the server
-        task.set_parameters(self.model,parameters)
+    metrics = MetricRecord({
+        "loss": float(loss),
+        "accuracy": float(acc),
+        "num-examples": len(X),
+    })
 
-        #collect the fresh live batch of th  system metrics
-        print("[CLIENT]  COllecting real-time system metrics for training........")
-        df_train = task.collect_batch(sample_size=50)
-        X,y = task.dataframe_to_xy(df_train)
+    content = RecordDict({
+        "metrics": metrics,
+    })
 
-        #Train the model
-        task.train_model(self.model, X, y)
-
-        #Extract the updated weights to send back
-        updated_params = task.get_parameters(self.model)
-        return updated_params, len(X), {}
-    
-    def evaluate(self,parameters,config):
-        #Update paramters to evaluate the largest global model
-        task.set_parameters(self.model,parameters)
-                            
-        #Collect evaluation metrics
-        df_test = task.collect_batch(samples_size=20)
-        X,y = task.dataframe_to_xy(df_test)
-
-        loss,accuracy = task.evaluate_model(self.model, X, y)
-        print(f"[CLIENT] Evaluation results - Loss: {loss}, Accuracy: {accuracy}")
-
-        return float(loss), len(X), {"accuracy": float(accuracy)}
-    
-def client_fn(context):
-    print("[CLIENT] Starting client with context:", context)
-    return SecurtiyClient().to_client()
-    
-#Create the ClientApp
-app = ClientApp(
-    client_fn=client_fn,
-    mods=[secaggplus_mod]
-    )
+    return Message(content=content,reply_to=msg)
