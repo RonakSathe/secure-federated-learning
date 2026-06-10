@@ -37,10 +37,12 @@ def collect_sample() -> LiveSample:
     label = 1 if score >= 3 else 0
     return LiveSample(cpu=cpu, memory=memory, connections=connections, bytes_sent=bytes_sent, bytes_recv=bytes_recv, label=label)
 
-def collect_batch(samples_size:int=50,delay_range:tuple[float,float]=(0.1,0.3)) -> pd.DataFrame:
+def collect_batch(partition_id:int,samples_size:int=50,delay_range:tuple[float,float]=(0.1,0.3)) -> pd.DataFrame:
     records = []
     for _ in range(samples_size):
         record = collect_sample()
+        record.cpu += 10 if partition_id == 0 else (20 if partition_id == 1 else 15) 
+        record.connections += 100000 if partition_id == 0 else (200000 if partition_id == 1 else 150000)
         records.append({
             "cpu": record.cpu,
             "memory": record.memory,
