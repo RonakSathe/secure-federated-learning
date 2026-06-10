@@ -1,6 +1,23 @@
 {
-    "round": 1,
-    "accuracy": 0.85,
-    "loss": 0.25,
-    "clients": 3
+    "train_metrics": {
+        "1": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.9979999999999999
+        },
+        "2": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.9999999999999999
+        }
+    },
+    "evaluate_metrics": {
+        "1": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
+        },
+        "2": {
+            "loss": 0.0,
+            "accuracy": 0.0
+        }
+    },
+    "server_metrics": {}
 }

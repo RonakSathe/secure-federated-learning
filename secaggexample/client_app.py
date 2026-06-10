@@ -19,11 +19,8 @@ def train(msg:Message,context:Context):
 
     #getting the partition id or client_id 
     partition_id = context.node_config["partition-id"]
-
-    #Creating one Malicious client for the test: unnatural behavious
-    if partition_id == 2:
-        model.coef_ *= 100
-
+    print(f"Partition ID: {partition_id}")
+    
     paramters = arrays.to_numpy_ndarrays()
     set_parameters(model, paramters)
 
@@ -32,10 +29,12 @@ def train(msg:Message,context:Context):
     
     
     old_params = get_parameters(model)
-    print(f"old params: {old_params}")
     train_model(model,X,y)
+    #Creating one Malicious client for the test: unnatural behavious
+    if partition_id == 2:
+        model.coef_ *= 100
+
     new_params = get_parameters(model)
-    print(f"new params: {new_params}")
     loss,acc = evaluate_model(model,X,y)
 
 
@@ -44,9 +43,6 @@ def train(msg:Message,context:Context):
     print(f"\n\n Partition: {partition_id}")
     print(f"\n Weight Change:  the delta is: {delta}")
 
-    print("\n After TRAINING")
-    print(model.coef_)
-    print(model.intercept_)
 
     #Adding a clipping 
     #1: It acts as first defense used in production FL systems
@@ -59,7 +55,6 @@ def train(msg:Message,context:Context):
 
     metrics = MetricRecord({
         "num-examples": len(X),
-        "partition-id": partition_id,
         "train_loss": float(loss),
         "train_accuracy": float(acc),
     })
