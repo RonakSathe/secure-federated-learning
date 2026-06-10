@@ -14,14 +14,8 @@ app = ClientApp()
 
 @app.train()
 def train(msg:Message,context:Context):
-
-    print("\n\n :::::::Context Details::::::::::",context)
     model = build_model()
     arrays = msg.content["arrays"]
-
-    print("\nBEFORE TRAINING")
-    print(model.coef_)
-    print(model.intercept_)
 
     #getting the partition id or client_id 
     partition_id = context.node_config["partition-id"]

@@ -22,4 +22,4 @@ def main(grid:Grid,context:Context):
         num_rounds=2,
     )
 
-    print(result)
+    print(f"Server result:{result} ")
