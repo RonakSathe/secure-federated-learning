@@ -1,4 +1,5 @@
 from flwr.clientapp import ClientApp
+from datetime import datetime
 import numpy as np
 from flwr.app import (
     Message,
@@ -6,6 +7,7 @@ from flwr.app import (
     RecordDict,ArrayRecord,MetricRecord,
 )
 from .task import *
+from .logger import log_client_metric
 
 #Trainig data
 
@@ -16,6 +18,11 @@ app = ClientApp()
 def train(msg:Message,context:Context):
     model = build_model()
     arrays = msg.content["arrays"]
+    config = msg.content["config"]
+
+    current_round = config.get(
+        "current-round", 0
+    )
 
     #getting the partition id or client_id 
     partition_id = context.node_config["partition-id"]
@@ -32,6 +39,8 @@ def train(msg:Message,context:Context):
     train_model(model,X,y)
     #Creating one Malicious client for the test: unnatural behavious
     if partition_id == 2:
+        print("\n\n\n xxxxxxxxxxxxxxxxxxxxxxxxx MALICIOUS ! CLIENT ! DETECTED ! xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ")
+        print(f"\n Partition id: {partition_id}")
         model.coef_ *= 100
 
     new_params = get_parameters(model)
@@ -40,9 +49,15 @@ def train(msg:Message,context:Context):
 
     #Computing the Delta: the Change==========================================================
     delta = np.linalg.norm(new_params[0]-old_params[0])
-    print(f"\n\n Partition: {partition_id}")
-    print(f"\n Weight Change:  the delta is: {delta}")
-
+    print(f"writing client Metrics wiht partiton id: {partition_id}, Delta: {delta}")
+    log_client_metric({
+        "round":current_round,
+        "timestamp": datetime.now().strftime("%H:%M:%S"),
+        "partition_id": int(partition_id),
+        "train_accuracy": float(acc),
+        "train_loss": float(loss),
+        "update_norm": float(delta),
+    })
 
     #Adding a clipping 
     #1: It acts as first defense used in production FL systems
@@ -57,6 +72,7 @@ def train(msg:Message,context:Context):
         "num-examples": len(X),
         "train_loss": float(loss),
         "train_accuracy": float(acc),
+
     })
 
     print(f"Model Coefficient: {model.coef_}")

@@ -1,79 +1,54 @@
-#Creating the dashboard 
 import streamlit as st
-from pathlib import Path
-import json
 import pandas as pd
+import json
 
 st.set_page_config(
-    page_title="Federated Learning Dashboard",
+    page_title="FL Securtiy Dashboard",
     layout="wide"
 )
 
-BASE_DIR = Path(__file__).parent
+st.title("Federated Learning Security Dashboard")
 
-metrics_file = BASE_DIR/"metrics.json"
-#set the tile
-st.title("Federated Learning Dashboard")
-
-#opening file: 
-with open(metrics_file,"r") as f:    
-    #data variable holding all the contents of the metrics.json file as json
+with open("dashboard/client_metrics.json","r") as f:
     data = json.load(f)
-train_df = pd.DataFrame.from_dict(data["train_metrics"],orient="index")
-eval_df = pd.DataFrame.from_dict(data["evaluate_metrics"],orient="index")
-train_df.index.name = "Round"
-eval_df.index.name = "Round"
 
-st.header("Training Summary")
-col1,col2,col3,col4 = st.columns(4)
+df = pd.DataFrame(data)
+st.subheader("Raw Metrics")
+st.dataframe(df)
 
-latest_train_acc = train_df["train_accuracy"].iloc[-1]
-latest_train_loss = train_df["train_loss"].iloc[-1]
-
-latest_eval_acc = eval_df["accuracy"].iloc[-1]
-latest_eval_loss = eval_df["loss"].iloc[-1]
-
-col1.metric(
-    "Train Accuracy",
-    f"{latest_train_acc:.4f}"
+#detecct anomalies automatically
+threshold = 5
+df["status"] = df["update_norm"].apply(
+    lambda x: "Suspicious" if x >threshold else "Normal"
 )
 
-col2.metric(
-    "Train loss",
-    f"{latest_eval_loss:.4f}"
+#CLIENT STATUS
+st.subheader("Client Status")
+st.dataframe(
+    df[
+        [
+            "partition_id",
+            "update_norm",
+            "status"
+        ]
+    ]
 )
 
-col3.metric(
-    "Eval Accuracy",
-    f"{latest_eval_acc:.4f}"
-)
+#Updated Norm Graph
+st.subheader("Update Norm Distribution")
+st.bar_chart(df.set_index("partition_id")["update_norm"])
 
-col4.metric(
-    "Eval loss",
-    f"{latest_eval_loss:.4f}"
-)
+#Malicious CLient Summary
+suspicious = df[df["update_norm"]>threshold]
 
-#Accuracy Chart
-st.header("Accuracy Over Rounds")
-accuracy_df = pd.DataFrame({
-    "Train Accuracy": train_df["train_accuracy"],
-    "Eval Accuracy": eval_df["accuracy"]
-})
+st.subheader("Detected Attackers")
 
-st.line_chart(accuracy_df)
-
-#Loss Chart
-st.header("Loss Over Rounds")
-loss_df = pd.DataFrame({
-    "Train Loss": train_df["train_loss"],
-    "Eval Loss": eval_df["loss"]
-})
-
-st.line_chart(loss_df)
-
-
-#Raw Metrics
-st.header("Training Metrics")
-st.dataframe(train_df)
-st.header("Evaluation Metrics")
-st.dataframe(eval_df)
+if len(suspicious) > 0:
+    st.error(
+        f"{len(suspicious)} suspicious client(s) detected"
+    )
+    st.dataframe(suspicious)
+else:
+    st.success(
+        "No Suspicious clients detected"
+    )
