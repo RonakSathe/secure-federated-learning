@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
+from functionalities import calculate_trust_score
 
 st.set_page_config(
     page_title="FL Securtiy Dashboard",
@@ -80,3 +81,28 @@ selected_client = st.selectbox(
 client_df = df[df["partition_id"]==selected_client]
 st.dataframe(client_df)
 st.line_chart(client_df.set_index("round")["update_norm"])
+
+#Creating Trust Column
+df["trust_score"] = df["update_norm"].apply(calculate_trust_score)
+
+
+#displaying trust table
+st.subheader("Client Trust Scores")
+trust_df = (
+    df.groupby("partition_id")
+    ["trust_score"].mean().reset_index()
+)
+st.dataframe(trust_df)
+
+
+st.subheader("Trust Alerts")
+low_trust = trust_df[trust_df["trust_score"]<60]
+if len(low_trust) > 0:
+    st.error(
+        f"{len(low_trust)} Low-Trust client(s) detected"
+    )
+    st.dataframe(low_trust)
+else:
+    st.success(
+        "ALl Clients trusted"
+    )

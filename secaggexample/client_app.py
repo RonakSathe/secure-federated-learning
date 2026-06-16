@@ -18,24 +18,16 @@ app = ClientApp()
 def train(msg:Message,context:Context):
     model = build_model()
     arrays = msg.content["arrays"]
-    config = msg.content["config"]
-
-    print(f"\n\n ==========x=x=x=x=x============Message contnet keys: {msg.content.keys()}")
-
-    print(f"\n\n\n  Message COntent: {msg.content}")
     server_round = msg.content["config"]["server-round"]
 
     #getting the partition id or client_id 
     partition_id = context.node_config["partition-id"]
-    print(f"Partition ID: {partition_id}")
-    
     paramters = arrays.to_numpy_ndarrays()
     set_parameters(model, paramters)
 
     df = collect_batch(partition_id=partition_id)
     X,y = dataframe_to_xy(df)
-    
-    
+      
     old_params = get_parameters(model)
     train_model(model,X,y)
     #Creating one Malicious client for the test: unnatural behavious
@@ -65,7 +57,6 @@ def train(msg:Message,context:Context):
     coef_norm = np.linalg.norm(model.coef_)
     if coef_norm > 10:
         model.coef_ = model.coef_ *(10/coef_norm)
-
 
     updated = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
 

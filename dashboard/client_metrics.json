@@ -182,5 +182,901 @@
         "train_accuracy": 0.98,
         "train_loss": 0.0,
         "update_norm": 0.20365304697343298
+    },
+    {
+        "round": 3,
+        "timestamp": "11:09:40",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.2027224006153139
+    },
+    {
+        "round": 3,
+        "timestamp": "11:09:41",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.17689774899609145
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:46",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2823178684141463
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:47",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2823179192919125
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:47",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2830538857887959
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:47",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.28231788020785
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:57",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.282312846369517
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:57",
+        "partition_id": 6,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.282312180522754
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:58",
+        "partition_id": 5,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.2823117406402784
+    },
+    {
+        "round": 2,
+        "timestamp": "11:09:59",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.282315919006598
+    },
+    {
+        "round": 2,
+        "timestamp": "11:10:07",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2823184342730152
+    },
+    {
+        "round": 2,
+        "timestamp": "11:10:08",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.282317931123405
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:26",
+        "partition_id": 1,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.9596239163769249
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:26",
+        "partition_id": 3,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.9596249896619623
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:26",
+        "partition_id": 0,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.959627692443143
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:26",
+        "partition_id": 2,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.0270427210078872
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:37",
+        "partition_id": 5,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.4105681804091716
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:37",
+        "partition_id": 7,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.8556329340427062
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:37",
+        "partition_id": 4,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.9814249218582558
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:37",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.9104717520126012
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:48",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.9599882035832982
+    },
+    {
+        "round": 4,
+        "timestamp": "11:10:48",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.7234562491858288
+    },
+    {
+        "round": 3,
+        "timestamp": "11:10:53",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.005566051176461882
+    },
+    {
+        "round": 3,
+        "timestamp": "11:10:53",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.012771239788063549
+    },
+    {
+        "round": 3,
+        "timestamp": "11:10:53",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.005548803519109477
+    },
+    {
+        "round": 3,
+        "timestamp": "11:10:53",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.005550500056458025
+    },
+    {
+        "round": 3,
+        "timestamp": "11:11:03",
+        "partition_id": 5,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.15133043958120906
+    },
+    {
+        "round": 3,
+        "timestamp": "11:11:04",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.041123935658359784
+    },
+    {
+        "round": 3,
+        "timestamp": "11:11:04",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.010215112185375444
+    },
+    {
+        "round": 3,
+        "timestamp": "11:11:04",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.0013659507189628661
+    },
+    {
+        "round": 3,
+        "timestamp": "11:11:15",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.005248502392802842
+    },
+    {
+        "round": 3,
+        "timestamp": "11:11:15",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.15497660529777815
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:32",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.3106172079763198
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:33",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.5737638798864788
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:33",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 42.84724351954809
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:33",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.5497725253612558
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:44",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.30077134737674055
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:44",
+        "partition_id": 5,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.3680535415458872
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:44",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.30554991839927215
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:44",
+        "partition_id": 6,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.6914192119464585
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:54",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.3009520843648135
+    },
+    {
+        "round": 5,
+        "timestamp": "11:11:55",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.30097742153715956
+    },
+    {
+        "round": 4,
+        "timestamp": "11:11:59",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.01741756601472007
+    },
+    {
+        "round": 4,
+        "timestamp": "11:11:59",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 3.2037311985903623
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:00",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.015551827315433557
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:00",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.015036062121278112
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:10",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.15389412321867588
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:10",
+        "partition_id": 5,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.01773736643841353
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:10",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.017557921388393287
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:11",
+        "partition_id": 7,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.024739105606992776
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:22",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.015918585900081595
+    },
+    {
+        "round": 4,
+        "timestamp": "11:12:22",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.02695675288943955
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:08",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.3514790171924503
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:08",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.8826912367846089
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:08",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.34397840039297267
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:08",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.3438814393618178
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:18",
+        "partition_id": 5,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.6857723075847243
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:19",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.6352765079659038
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:19",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.6955649186852654
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:20",
+        "partition_id": 7,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.9669939067662707
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:41",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.40677335492748656
+    },
+    {
+        "round": 5,
+        "timestamp": "11:13:43",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.3378028354173357
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:14",
+        "partition_id": 0,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.8792303565249967
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:14",
+        "partition_id": 2,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 30.18422338900782
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:14",
+        "partition_id": 3,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.8704094275101252
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:15",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.7466409547271075
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:25",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.7466979895746697
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:25",
+        "partition_id": 5,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.0840825786597772
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:26",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2498229037747763
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:26",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.7813690554524539
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:35",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.7223920790878177
+    },
+    {
+        "round": 1,
+        "timestamp": "11:47:36",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.7466927941093557
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:20",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.1950645670581532
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:21",
+        "partition_id": 2,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 69.3087206984936
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:21",
+        "partition_id": 1,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.1749378034909603
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:21",
+        "partition_id": 3,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.2084476670682314
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:31",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.1950617684124736
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:32",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.1950645389868788
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:32",
+        "partition_id": 5,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.195064471936361
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:32",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.1950643535343883
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:42",
+        "partition_id": 8,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.0989594714301798
+    },
+    {
+        "round": 2,
+        "timestamp": "11:48:43",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.1950649115071563
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:28",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.213148140901557
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:28",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.210476344463937
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:29",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.3075299168221497
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:29",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2147753196466853
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:39",
+        "partition_id": 4,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.2125265078126268
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:39",
+        "partition_id": 5,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.2125274547007485
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:40",
+        "partition_id": 7,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.391767952326755
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:40",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.2126032682352677
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:50",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.3160818120554025
+    },
+    {
+        "round": 3,
+        "timestamp": "11:49:50",
+        "partition_id": 8,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 1.3220737253356862
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:35",
+        "partition_id": 0,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.14234057838109676
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:35",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 1.5981945615499027
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:35",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14215687566012447
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:35",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14241498299074068
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:45",
+        "partition_id": 4,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.145657566635416
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:46",
+        "partition_id": 5,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14555093174047606
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:46",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14530143078768903
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:46",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14463363454620057
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:56",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14258348927187886
+    },
+    {
+        "round": 4,
+        "timestamp": "11:50:57",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.14264370117354092
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:41",
+        "partition_id": 2,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 19.3871136830523
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:41",
+        "partition_id": 1,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.16128858569840912
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:41",
+        "partition_id": 0,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.15871930195140332
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:41",
+        "partition_id": 3,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.1546153514512159
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:52",
+        "partition_id": 5,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.4266171314276603
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:52",
+        "partition_id": 4,
+        "train_accuracy": 0.98,
+        "train_loss": 0.0,
+        "update_norm": 0.3551353759937394
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:53",
+        "partition_id": 6,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.16427469296625946
+    },
+    {
+        "round": 5,
+        "timestamp": "11:51:53",
+        "partition_id": 7,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.16299142339782963
+    },
+    {
+        "round": 5,
+        "timestamp": "11:52:03",
+        "partition_id": 9,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.15382418021517
+    },
+    {
+        "round": 5,
+        "timestamp": "11:52:04",
+        "partition_id": 8,
+        "train_accuracy": 1.0,
+        "train_loss": 0.0,
+        "update_norm": 0.2283582590956033
     }
 ]
