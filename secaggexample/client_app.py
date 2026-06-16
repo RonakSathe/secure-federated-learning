@@ -20,9 +20,10 @@ def train(msg:Message,context:Context):
     arrays = msg.content["arrays"]
     config = msg.content["config"]
 
-    current_round = config.get(
-        "current-round", 0
-    )
+    print(f"\n\n ==========x=x=x=x=x============Message contnet keys: {msg.content.keys()}")
+
+    print(f"\n\n\n  Message COntent: {msg.content}")
+    server_round = msg.content["config"]["server-round"]
 
     #getting the partition id or client_id 
     partition_id = context.node_config["partition-id"]
@@ -51,7 +52,7 @@ def train(msg:Message,context:Context):
     delta = np.linalg.norm(new_params[0]-old_params[0])
     print(f"writing client Metrics wiht partiton id: {partition_id}, Delta: {delta}")
     log_client_metric({
-        "round":current_round,
+        "round":server_round,
         "timestamp": datetime.now().strftime("%H:%M:%S"),
         "partition_id": int(partition_id),
         "train_accuracy": float(acc),

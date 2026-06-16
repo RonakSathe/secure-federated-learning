@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-
 BASE_DIR = Path(__file__).parent.parent
 DASHBOARD_DIR = BASE_DIR / "dashboard"
 
@@ -24,6 +23,7 @@ def log_client_metric(metric: dict):
             data = []
 
     data.append(metric)
+    print(metric)
 
     with open(path, "w") as f:
         json.dump(data, f, indent=4)

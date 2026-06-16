@@ -14,12 +14,14 @@ def main(grid:Grid,context:Context):
 
     arrays = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
 
-    strategy = FedAvg()
+    strategy = FedAvg(
+        fraction_train= 1.0,
+    )
 
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=2,
+        num_rounds=5,
     )
 
     import json

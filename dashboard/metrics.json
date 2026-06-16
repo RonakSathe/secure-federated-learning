@@ -2,21 +2,21 @@
     "train_metrics": {
         "1": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9859999999999999
+            "train_accuracy": 0.9899999999999999
         },
         "2": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9959999999999999
+            "train_accuracy": 0.9979999999999999
         }
     },
     "evaluate_metrics": {
         "1": {
             "loss": 0.0,
-            "accuracy": 0.9999999999999999
+            "accuracy": 0.0
         },
         "2": {
             "loss": 0.0,
-            "accuracy": 0.8999999999999999
+            "accuracy": 0.9999999999999999
         }
     },
     "server_metrics": {}

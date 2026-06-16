@@ -16,6 +16,23 @@ df = pd.DataFrame(data)
 st.subheader("Raw Metrics")
 st.dataframe(df)
 
+#OVerview 
+st.subheader("Overview")
+col1,col2,col3,col4 = st.columns(4)
+col1.metric("Total Records",len(df))
+col2.metric("Total CLients",df["partition_id"].nunique())
+col3.metric("Current Round",df["round"].max())
+col4.metric("Max Update norn",round(df["update_norm"].max(),2))
+
+#Round Filter
+st.subheader("Round Filter")
+selected_round = st.selectbox(
+    "Choose Round",
+    sorted(df["round"].unique())
+)
+round_df = df[df["round"]==selected_round]
+
+
 #detecct anomalies automatically
 threshold = 5
 df["status"] = df["update_norm"].apply(
@@ -52,3 +69,14 @@ else:
     st.success(
         "No Suspicious clients detected"
     )
+
+#Client History
+st.subheader("Client History")
+selected_client = st.selectbox(
+    "Select CLient",
+    sorted(df["partition_id"].unique())
+)
+
+client_df = df[df["partition_id"]==selected_client]
+st.dataframe(client_df)
+st.line_chart(client_df.set_index("round")["update_norm"])
