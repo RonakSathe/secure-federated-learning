@@ -25,4 +25,4 @@ default = "local-simulation"
 
 
 [tool.flwr.federation.simulations.local-simulation]
-options.num-supernodes = 3
+options.num-supernodes = 10

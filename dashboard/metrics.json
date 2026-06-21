@@ -2,29 +2,69 @@
     "train_metrics": {
         "1": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9844444444444445
+            "train_accuracy": 0.8979999999999999
         },
         "2": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9959999999999999
+            "train_accuracy": 0.7999999999999999
         },
         "3": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9999999999999999
+            "train_accuracy": 0.7999999999999999
         },
         "4": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9959999999999999
+            "train_accuracy": 0.8999999999999999
         },
         "5": {
             "train_loss": 0.0,
-            "train_accuracy": 0.9979999999999999
+            "train_accuracy": 0.7999999999999999
+        },
+        "6": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.9919999999999999
+        },
+        "7": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.8999999999999999
+        },
+        "8": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.9999999999999999
+        },
+        "9": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.8999999999999999
+        },
+        "10": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.7939999999999999
+        },
+        "11": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.9999999999999999
+        },
+        "12": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.8844444444444445
+        },
+        "13": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.7999999999999999
+        },
+        "14": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.9999999999999999
+        },
+        "15": {
+            "train_loss": 0.0,
+            "train_accuracy": 0.7999999999999999
         }
     },
     "evaluate_metrics": {
         "1": {
             "loss": 0.0,
-            "accuracy": 0.8999999999999999
+            "accuracy": 0.9999999999999999
         },
         "2": {
             "loss": 0.0,
@@ -32,7 +72,7 @@
         },
         "3": {
             "loss": 0.0,
-            "accuracy": 0.9999999999999999
+            "accuracy": 0.0
         },
         "4": {
             "loss": 0.0,
@@ -40,7 +80,47 @@
         },
         "5": {
             "loss": 0.0,
-            "accuracy": 0.136
+            "accuracy": 0.9999999999999999
+        },
+        "6": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
+        },
+        "7": {
+            "loss": 0.0,
+            "accuracy": 0.0
+        },
+        "8": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
+        },
+        "9": {
+            "loss": 0.0,
+            "accuracy": 0.0
+        },
+        "10": {
+            "loss": 0.0,
+            "accuracy": 0.0
+        },
+        "11": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
+        },
+        "12": {
+            "loss": 0.0,
+            "accuracy": 0.0
+        },
+        "13": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
+        },
+        "14": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
+        },
+        "15": {
+            "loss": 0.0,
+            "accuracy": 0.9999999999999999
         }
     },
     "server_metrics": {}

@@ -106,3 +106,10 @@ else:
     st.success(
         "ALl Clients trusted"
     )
+
+#Trust Score Chart
+st.subheader("Trust Score DIstribution")
+st.bar_chart(
+    trust_df.set_index(
+        "partition_id")["trust_score"]
+)

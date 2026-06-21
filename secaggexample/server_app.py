@@ -21,7 +21,7 @@ def main(grid:Grid,context:Context):
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=5,
+        num_rounds=15,
     )
 
     import json
