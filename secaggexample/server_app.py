@@ -1,7 +1,7 @@
 from flwr.serverapp import ServerApp, Grid
 from flwr.serverapp.strategy import FedAvg
 from .task import *
-
+from strategy.secure_strategy import SecureFedAvg
 from flwr.app import (
     ArrayRecord,Context,
 )
@@ -14,14 +14,14 @@ def main(grid:Grid,context:Context):
 
     arrays = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
 
-    strategy = FedAvg(
+    strategy = SecureFedAvg(
         fraction_train= 1.0,
     )
 
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=15,
+        num_rounds=2,
     )
 
     import json

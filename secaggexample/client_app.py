@@ -63,11 +63,13 @@ def train(msg:Message,context:Context):
     #Normalization of coefficient & intercenpt
     coef_norm = np.linalg.norm(model.coef_)
     intercept_norm = np.linalg.norm(model.intercept_)
+
     
     print(f"writing client Metrics with partiton id: {partition_id}")
     log_client_metric({
         "round":server_round,
         "partition_id": int(partition_id),
+        "attack_type": attack_type,
         "train_accuracy": float(acc),
         "train_loss": float(loss),
         "update_norm": float(delta),
@@ -78,7 +80,7 @@ def train(msg:Message,context:Context):
         "avg_connections": float(avg_connections),
         "avg_bytes_sent":float(avg_bytes_sent),
         "avg_bytes_recv": float(avg_bytes_recv),
-        "timestamp": datetime.now().strftime("%H:%M:%S"),
+        "training_time": float(training_time),
     })
 
     print(f"Saving data into attack dataset csv file")
@@ -108,8 +110,19 @@ def train(msg:Message,context:Context):
 
     metrics = MetricRecord({
         "num-examples": len(X),
+        "partition_id": int(partition_id),
         "train_loss": float(loss),
         "train_accuracy": float(acc),
+
+        "update_norm": float(delta),
+        "coef_norm": float(coef_norm),
+        "intercept_norm": float(intercept_norm),
+
+        "avg_cpu": float(avg_cpu),
+        "avg_memory": float(avg_memory),
+        "avg_connections": float(avg_connections),
+
+        "training_time": float(training_time),
 
     })
 

@@ -9,6 +9,7 @@ df = pd.read_csv("datasets/attack_dataset_clean.csv")
 print(df["label"].value_counts())
 
 FEATURES = [
+    "train_accuracy",
     "update_norm",
     "coef_norm",
     "intercept_norm",
@@ -70,5 +71,11 @@ print(
     )
 )
 
-pred_prob = model.predict_proba(X_test_scaled)
-print(pred_prob[:10])
+joblib.dump(
+    model,
+    "models/mlp_attack_detector.pkl"
+)
+joblib.dump(
+    scaler,
+    "models/mlp_scaler.pkl"
+)

@@ -2,114 +2,166 @@ import streamlit as st
 import pandas as pd
 import json
 from functionalities import calculate_trust_score
+import joblib
+from streamlit_autorefresh import st_autorefresh
+import base64
+
+
+#Video Trying as Background
+video_path = "DCIM/cyber_bg.mp4"
+def get_video_base_64(video_path):
+    with open(video_path,"rb") as video_file:
+        return base64.b64encode(video_file.read()).decode()
+
+video_base64 = get_video_base_64(video_path)
+
+st.markdown(
+    f"""
+    <style>
+
+    #bg-video {{
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        opacity: 0.50;
+    }}
+
+    .stApp {{
+        background: transparent;
+    }}
+
+    </style>
+
+    <video autoplay muted loop id="bg-video">
+        <source src="data:video/mp4;base64,{video_base64}" type="video/mp4">
+    </video>
+
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+
+###########################################################
+#############################################################
+
+count = st_autorefresh(
+    interval=3000,
+    key="dashboard_refresh"
+)
+st.caption(f"Dashboard refreshed {count} times ")
+
+#Loading Mdel
+mlp_model = joblib.load("models/mlp_attack_detector.pkl")
+scaler = joblib.load("models/mlp_scaler.pkl")
+
+
 
 st.set_page_config(
-    page_title="FL Securtiy Dashboard",
+    page_title="Real-TIme Intrusion Detecction & MOdel Poisoning Monitoring Dashboard",
     layout="wide"
 )
 
-st.title("Federated Learning Security Dashboard")
 
 with open("dashboard/client_metrics.json","r") as f:
     data = json.load(f)
 
 df = pd.DataFrame(data)
+
+st.title(" FLIDS Security Dashboard")
+
+#THE KPI Details
+st.subheader("System Overview")
+
+latest_round = df["round"].max()
+latest_df = df[df["round"]==latest_round]
+
+total_clients = latest_df["partition_id"].nunique()
+current_round = int(df["round"].max())
+suspicious_clients = len(latest_df[latest_df["status"]=="Suspicious"])
+malicious_clients = len(latest_df[latest_df["status"]=="Malicious"])
+attack_rate = round(
+    malicious_clients/max(total_clients,1)*100,2
+)
+
+col1,col2,col3,col4,col5 = st.columns(5)
+col1.metric("Total CLients",total_clients)
+col2.metric("Current Round",current_round)
+col3.metric("Suspicious Clients",suspicious_clients)
+col4.metric("Malicious Clients",malicious_clients)
+col5.metric("Attack Rate %", attack_rate)
+
+
+
 st.subheader("Raw Metrics")
 st.dataframe(df)
 
-#OVerview 
-st.subheader("Overview")
-col1,col2,col3,col4 = st.columns(4)
-col1.metric("Total Records",len(df))
-col2.metric("Total CLients",df["partition_id"].nunique())
-col3.metric("Current Round",df["round"].max())
-col4.metric("Max Update norn",round(df["update_norm"].max(),2))
+#Building Features:
+FEAUTRES = [
+    "update_norm",
+    "coef_norm",
+    "intercept_norm",
+    "avg_cpu",
+    "avg_memory",
+    "avg_connections",
+    "training_time",
+]
 
-#Round Filter
-st.subheader("Round Filter")
-selected_round = st.selectbox(
-    "Choose Round",
-    sorted(df["round"].unique())
+X = df[FEAUTRES]
+X_scaled = scaler.transform(X)
+
+predictions = mlp_model.predict(X_scaled)
+probabilities = mlp_model.predict_proba(X_scaled)
+
+#Adding Results
+df["predictions"] = predictions
+df["attack_confidence"] = (
+    probabilities[:,1] *100
 )
-round_df = df[df["round"]==selected_round]
 
-
-#detecct anomalies automatically
-threshold = 5
-df["status"] = df["update_norm"].apply(
-    lambda x: "Suspicious" if x >threshold else "Normal"
+df["status"] = df["predictions"].map(
+    {
+        0:"Normal",
+        1:"Malicious"
+    }
 )
 
-#CLIENT STATUS
-st.subheader("Client Status")
+
+#MLP Detection
+st.subheader("MLP Attack Detection")
+
 st.dataframe(
     df[
         [
+            "round",
             "partition_id",
+            "attack_type",
             "update_norm",
-            "status"
+            "status",
+            "attack_confidence"
         ]
     ]
 )
 
-#Updated Norm Graph
-st.subheader("Update Norm Distribution")
-st.bar_chart(df.set_index("partition_id")["update_norm"])
 
-#Malicious CLient Summary
-suspicious = df[df["update_norm"]>threshold]
-
-st.subheader("Detected Attackers")
-
-if len(suspicious) > 0:
-    st.error(
-        f"{len(suspicious)} suspicious client(s) detected"
-    )
-    st.dataframe(suspicious)
-else:
-    st.success(
-        "No Suspicious clients detected"
-    )
-
-#Client History
-st.subheader("Client History")
-selected_client = st.selectbox(
-    "Select CLient",
-    sorted(df["partition_id"].unique())
+#High Risk CLients
+st.subheader("Highest RIsk Cients")
+st.dataframe(
+    df.sort_values(
+        "attack_confidence",
+        ascending=False
+    ).head(10)
 )
 
-client_df = df[df["partition_id"]==selected_client]
-st.dataframe(client_df)
-st.line_chart(client_df.set_index("round")["update_norm"])
-
-#Creating Trust Column
-df["trust_score"] = df["update_norm"].apply(calculate_trust_score)
-
-
-#displaying trust table
-st.subheader("Client Trust Scores")
-trust_df = (
-    df.groupby("partition_id")
-    ["trust_score"].mean().reset_index()
-)
-st.dataframe(trust_df)
-
-
-st.subheader("Trust Alerts")
-low_trust = trust_df[trust_df["trust_score"]<60]
-if len(low_trust) > 0:
-    st.error(
-        f"{len(low_trust)} Low-Trust client(s) detected"
-    )
-    st.dataframe(low_trust)
-else:
-    st.success(
-        "ALl Clients trusted"
-    )
-
-#Trust Score Chart
-st.subheader("Trust Score DIstribution")
+#COnfidence Chart
+st.subheader("Attack Confidence Chart")
 st.bar_chart(
-    trust_df.set_index(
-        "partition_id")["trust_score"]
+    df.set_index(
+        "partition_id"
+    )["attack_confidence"]
 )
