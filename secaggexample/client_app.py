@@ -1,5 +1,4 @@
 from flwr.clientapp import ClientApp
-from datetime import datetime
 import numpy as np
 from flwr.app import (
     Message,
@@ -50,6 +49,7 @@ def train(msg:Message,context:Context):
     training_time = time.time() - start_time
     #Creating one Malicious client for the test: unnatural behavious
     attacker_ids = random.sample(range(10),2)
+    # attacker_ids = []
     attack_type = "normal"
     if partition_id in attacker_ids:
         attack_type = apply_attack(model)
@@ -126,17 +126,11 @@ def train(msg:Message,context:Context):
 
     })
 
-    print(f"Model Coefficient: {model.coef_}")
-    print(f"Model Intercept: {model.intercept_}")
-
     content = RecordDict({
         "arrays": updated,
         "metrics": metrics,
     })
-    print("===========================================CLIENT TRAINING STTARTED====================================================================")
-    return Message(content=content,
-                   reply_to=msg,
-                   )
+    return Message(content=content,reply_to=msg)
 
 @app.evaluate()
 def evaluate(msg:Message,context:Context):
@@ -158,6 +152,7 @@ def evaluate(msg:Message,context:Context):
         "accuracy": float(acc),
         "num-examples": len(X),
     })
+
 
     content = RecordDict({
         "metrics": metrics,

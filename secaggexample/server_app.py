@@ -2,6 +2,9 @@ from flwr.serverapp import ServerApp, Grid
 from flwr.serverapp.strategy import FedAvg
 from .task import *
 from strategy.secure_strategy import SecureFedAvg
+import json
+import os
+
 from flwr.app import (
     ArrayRecord,Context,
 )
@@ -14,19 +17,50 @@ def main(grid:Grid,context:Context):
 
     arrays = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
 
-    strategy = SecureFedAvg(
-        fraction_train= 1.0,
-    )
+    # strategy = SecureFedAvg(
+    #     fraction_train= 1.0,
+    # )
+
+    strategy = SecureFedAvg(fraction_train=1.0)
 
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=2,
+        num_rounds=30,
     )
 
-    import json
-    import os
+    print("\nEVALUATE METRICS CLIENT APP")
+    print(result.evaluate_metrics_clientapp)
 
+    print("\nTRAIN METRICS CLIENT APP")
+    print(result.train_metrics_clientapp)
+
+    #Appending the results
+    rows = []
+    for rnd,metrics in result.train_metrics_clientapp.items():
+        rows.append({
+            "round": int(rnd),
+            "train_accuracy": metrics.get("train_accuracy",0),
+            "train_loss": metrics.get("train_loss", 0),
+            "update_norm": metrics.get("update_norm", 0),
+            "coef_norm": metrics.get("coef_norm", 0),
+        })
+    df = pd.DataFrame(rows)
+    EXPERIMENT_NAME = "attack_securefedavg"
+    os.makedirs("results",exist_ok=True)
+    df.to_csv(f"results/{EXPERIMENT_NAME}.csv",index=False)
+    print(f"Saved in results/{EXPERIMENT_NAME}.csv")
+
+    eval_rows = []
+    for rnd,metrics in result.evaluate_metrics_clientapp.items():
+        eval_rows.append({
+            "round": int(rnd),
+            "accuracy": metrics.get("accuracy", 0),
+            "loss": metrics.get("loss", 0),
+        })
+    pd.DataFrame(eval_rows).to_csv(f"results/{EXPERIMENT_NAME}_eval.csv",index=False)
+    print(f"Saved in results/{EXPERIMENT_NAME}_eval.csv")
+    
     train_metrics = {
         str(rnd): dict(metrics) for rnd,metrics in result.train_metrics_clientapp.items()
     }
@@ -54,7 +88,4 @@ def main(grid:Grid,context:Context):
         )
 
     print(f"\n\nServer result:{result} ")
-    print(f"\n\nResult of client app training: {result.train_metrics_clientapp}")
-    print(f"\n\nResult of client app evaluate: {result.evaluate_metrics_clientapp}")
-    print(f"\n\nResult of server app evaluate: {result.evaluate_metrics_serverapp}")
     

@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from flwr.serverapp.strategy import FedAvg
-from flwr.app import ArrayRecord,MetricRecord
 
 class SecureFedAvg(FedAvg):
     def aggregate_train(self,server_round,replies):
