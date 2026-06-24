@@ -7,14 +7,20 @@ class SecureFedAvg(FedAvg):
         valid_replies, failures = self._check_and_log_replies(replies,is_train=True)
 
         blocked_file = Path("dashboard/blocked_clients.json")
+        blocked_clients = set()
+        try:
+            if blocked_file.exists():
+                with open(blocked_file) as f:
+                    data = json.load(f)
+                blocked_clients = {
+                    int(x["partition_id"]) for x in data.get("blocked_clients",[])
+                }
 
-        if blocked_file.exists():
-            with open(blocked_file) as f:
-                data = json.load(f)
-            
-            blocked_clients = {
-                int(x["partition_id"]) for x in data
-            }
+                print("Blocked_CLients",blocked_clients)
+
+        except Exception as e:
+            print(f"Blocked File Error: {e}")
+
         print(f"\n Blocked CLients:  {blocked_clients}")
 
         filtered_replies = []

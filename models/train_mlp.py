@@ -5,7 +5,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score,classification_report,confusion_matrix
 import joblib
 
-df = pd.read_csv("datasets/attack_dataset_clean.csv")
+df = pd.read_csv("datasets/attack_dataset.csv")
 print(df["label"].value_counts())
 
 FEATURES = [
@@ -27,7 +27,7 @@ X_train, X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,stratify=y,r
 
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.fit_transform(X_test)
+X_test_scaled = scaler.transform(X_test)
 
 #Building Neural Network
 model = MLPClassifier(
@@ -39,7 +39,7 @@ model = MLPClassifier(
 )
 
 #Training the model
-model.fit(X_test_scaled,y_test)
+model.fit(X_train_scaled,y_train)
 
 pred = model.predict(X_test_scaled)
 

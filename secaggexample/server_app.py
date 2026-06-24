@@ -9,10 +9,23 @@ from flwr.app import (
     ArrayRecord,Context,
 )
 
+def clear_dashbaord_files():
+    files = [
+        "dashboard/client_metrics.json",
+        "dashboard/latest_predictions.json",
+        "dashboard/blocked_clients.json",
+    ]
+    for file in files:
+        if os.path.exists(file):
+            os.remove(file)
+            print(f"Deleted: file")
+
 app = ServerApp()
 
 @app.main()
 def main(grid:Grid,context:Context):
+
+    clear_dashbaord_files()
     model = build_model()
 
     arrays = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
@@ -26,7 +39,7 @@ def main(grid:Grid,context:Context):
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=30,
+        num_rounds=20,
     )
 
     print("\nEVALUATE METRICS CLIENT APP")

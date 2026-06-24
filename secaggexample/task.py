@@ -29,11 +29,11 @@ def collect_sample() -> LiveSample:
     bytes_recv = float(net.bytes_recv)
 
     score=0
-    if cpu > 50: score+=1
-    if memory > 50: score+=1
-    if connections > 30: score+=1
-    if bytes_sent > 200000: score+=1
-    if bytes_recv > 200000: score+=1
+    if cpu > 70: score+=1
+    if memory > 85: score+=1
+    if connections > 180000: score+=1
+    if bytes_sent > 90000000: score+=1
+    if bytes_recv > 1100000000: score+=1
     label = 1 if score >= 3 else 0
     return LiveSample(cpu=cpu, memory=memory, connections=connections, bytes_sent=bytes_sent, bytes_recv=bytes_recv, label=label)
 
@@ -51,11 +51,14 @@ def collect_batch(partition_id:int,samples_size:int=50,delay_range:tuple[float,f
             "bytes_recv": record.bytes_recv,
             "label": record.label
         })
+        df = pd.DataFrame(records)
+        cpu_threshold = df["cpu"].median()
+        df["label"] = (df["cpu"]>cpu_threshold).astype(int)
         time.sleep(random.uniform(*delay_range))
-    return pd.DataFrame(records)
+    return df
 
 def build_model() -> LogisticRegression:
-    model = LogisticRegression()
+    model = LogisticRegression(max_iter=2000,random_state=42)
     #Dumy fit so coef_ & intercept_ exist in true nature
     X_init = np.random.rand(10,len(FEATURE_NAMES))
     y_init = np.random.randint(0,2,size=10)

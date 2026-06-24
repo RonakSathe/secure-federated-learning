@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import json
-from functionalities import calculate_trust_score
 import joblib
 from streamlit_autorefresh import st_autorefresh
 import base64
@@ -251,15 +250,16 @@ with tab2:
 
     blocked = pd.read_json("dashboard/blocked_clients.json")
     st.subheader("Detected Malicious Clients")
-
+    print(blocked.keys())
     st.dataframe(
-        blocked[
-            [
-                "partition_id",
-                "attack_type",
-                "attack_confidence",
-                "status"
-            ]
+        [
+            {
+                "partition_id": record["partition_id"],
+                "attack_type": record["attack_type"],
+                "status": record["status"],
+                "reason": record["reason"] 
+
+            } for record in blocked["blocked_clients"]
         ]
     )
 

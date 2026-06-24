@@ -43,12 +43,14 @@ def train(msg:Message,context:Context):
 
     X,y = dataframe_to_xy(df)
       
+
+      
     old_params = get_parameters(model)
     start_time = time.time()
     train_model(model,X,y)
     training_time = time.time() - start_time
     #Creating one Malicious client for the test: unnatural behavious
-    attacker_ids = random.sample(range(10),2)
+    attacker_ids = random.sample(range(10),3)
     # attacker_ids = []
     attack_type = "normal"
     if partition_id in attacker_ids:
@@ -57,6 +59,9 @@ def train(msg:Message,context:Context):
     else: label = 0
 
     new_params = get_parameters(model)
+    print("Labels:", np.unique(y))
+    print("Label counts:")
+    print(pd.Series(y).value_counts())
     loss,acc = evaluate_model(model,X,y)
     #Computing the Delta: the Change==========================================================
     delta = np.linalg.norm(new_params[0]-old_params[0])
