@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from flwr.server.workflow import SecAggPlusWorkflow
 # Load files
 baseline = pd.read_csv("results/baseline.csv")
 attack = pd.read_csv("results/attack_fedavg.csv")

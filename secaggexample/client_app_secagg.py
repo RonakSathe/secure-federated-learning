@@ -5,6 +5,7 @@ from flwr.app import (
     Context,
     RecordDict,ArrayRecord,MetricRecord,
 )
+from flwr.client.mod import secaggplus_mod
 from .task import *
 from .logger import log_client_metric
 from .dataset_logger import save_training_sample
@@ -15,7 +16,10 @@ import random
 
 #Trainig data
 
-app = ClientApp()
+app = ClientApp(
+    mods=[secaggplus_mod,]
+)
+
 
 
 @app.train()
@@ -25,7 +29,8 @@ def train(msg:Message,context:Context):
     paramters = arrays.to_numpy_ndarrays()
     set_parameters(model, paramters)
     partition_id = context.node_config["partition-id"]
-    
+    print(f"Metadata: {msg.metadata}")
+    print(f"Node Id: {msg.metadata.dst_node_id}")
     #====================================================
     # GET CURRENT ROUND
     #====================================================

@@ -4,7 +4,8 @@ from .task import *
 from strategy.secure_strategy import SecureFedAvg
 import json
 import os
-
+from flwr.server.workflow import SecAggPlusWorkflow
+from strategy.adaptive_secure_fedavg import AdaptiveSecureFedAvg
 from flwr.app import (
     ArrayRecord,Context,
 )
@@ -39,7 +40,7 @@ def main(grid:Grid,context:Context):
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=20,
+        num_rounds=10,
     )
 
     print("\nEVALUATE METRICS CLIENT APP")
