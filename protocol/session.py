@@ -8,7 +8,7 @@ from .state import ProtocolState
 class ProtocolSession:
 
     session_id: str = field(
-        default_factory=lambda: str(uuid.uuid4)
+        default_factory=lambda: str(uuid.uuid4())
     )
     round_number : int = 0
     participants : list[int] = field(default_factory=list)

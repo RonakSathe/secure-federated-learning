@@ -6,7 +6,7 @@ from flwr.common import log, RecordDict,MessageType
 from logging import INFO
 #testing 
 from protocol.coordinator import ProtocolCoordinator
-from protocol.client_protocol import CLientProtocol
+from protocol.key_registry import PublicKeyPacket
 from protocol.transport import Transport
 
 class SecureFedAvg(FedAvg):
@@ -112,8 +112,25 @@ class SecureFedAvg(FedAvg):
             metrics = msg.content["metrics"]
             partition_id = int(metrics["partition_id"])
             public_key = Transport.decode_bytes(metrics["public_key"])
+
+            
+            packet = PublicKeyPacket(
+                session_id = self.coordinator.current_session.session_id,
+                node_id = msg.metadata.src_node_id,
+                public_key = public_key,
+            )
+            self.coordinator.key_registry.register_key(
+                self.coordinator.current_session,
+                packet=packet,
+            )
+
             print(f"Partition id: {partition_id} with public key: {public_key.hex()}")
             mapping[node_id] = { "partition_id": partition_id,"last_round": server_round,}
+        
+        print(f"\n ==================Publick Key Registry ===================)")
+        for node,packet in self.coordinator.current_session.public_keys.items():
+            print(f"Node: {node}, Session: {packet.session_id} : Key: {packet.public_key.hex()[:32]}")
+
         with open(mapping_file,"w") as f: json.dump(mapping,f,indent=4)
         print("\n\n =========NODE Mapping ================")
         for node, info in mapping.items():

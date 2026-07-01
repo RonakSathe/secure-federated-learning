@@ -430,5 +430,45 @@
     "312351971805043332": {
         "partition_id": 8,
         "last_round": 2
+    },
+    "13686822435559902949": {
+        "partition_id": 1,
+        "last_round": 2
+    },
+    "17546338071636853210": {
+        "partition_id": 2,
+        "last_round": 2
+    },
+    "10372098863767502713": {
+        "partition_id": 0,
+        "last_round": 2
+    },
+    "13750058869338295303": {
+        "partition_id": 3,
+        "last_round": 2
+    },
+    "9151902341959766938": {
+        "partition_id": 4,
+        "last_round": 2
+    },
+    "16741098850357995936": {
+        "partition_id": 5,
+        "last_round": 1
+    },
+    "11088892320130068121": {
+        "partition_id": 6,
+        "last_round": 2
+    },
+    "13276084537702781305": {
+        "partition_id": 7,
+        "last_round": 2
+    },
+    "9574668951813344430": {
+        "partition_id": 9,
+        "last_round": 2
+    },
+    "12828088849066104032": {
+        "partition_id": 8,
+        "last_round": 2
     }
 }
