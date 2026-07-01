@@ -6,6 +6,8 @@ from flwr.common import log, RecordDict,MessageType
 from logging import INFO
 #testing 
 from protocol.coordinator import ProtocolCoordinator
+from protocol.client_protocol import CLientProtocol
+from protocol.transport import Transport
 
 class SecureFedAvg(FedAvg):
    def __init__(self,*args,**kwargs):
@@ -109,6 +111,8 @@ class SecureFedAvg(FedAvg):
             node_id = str(msg.metadata.src_node_id)
             metrics = msg.content["metrics"]
             partition_id = int(metrics["partition_id"])
+            public_key = Transport.decode_bytes(metrics["public_key"])
+            print(f"Partition id: {partition_id} with public key: {public_key.hex()}")
             mapping[node_id] = { "partition_id": partition_id,"last_round": server_round,}
         with open(mapping_file,"w") as f: json.dump(mapping,f,indent=4)
         print("\n\n =========NODE Mapping ================")

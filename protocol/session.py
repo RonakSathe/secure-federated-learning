@@ -11,8 +11,14 @@ class ProtocolSession:
         default_factory=lambda: str(uuid.uuid4)
     )
     round_number : int = 0
-    participants : Dict = field(default_factory=dict)
+    participants : list[int] = field(default_factory=list)
     state: ProtocolState = ProtocolState.CREATED
     created_at: float = field(default_factory=time.time)
+
+    #---------NEW ----------------
+    public_keys: dict = field(default_factory=dict)
+    peer_assignments: dict = field(default_factory=dict)
+    mask_packets : dict = field(default_factory=dict)
+    metadata: dict = field(default_factory=dict)
 
     

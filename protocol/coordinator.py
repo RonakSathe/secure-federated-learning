@@ -1,9 +1,13 @@
 from .session import ProtocolSession
 from .assignment import AssignmentEngine
 from .state import ProtocolState
+from .key_registry import KeyRegistry
+
+
 class ProtocolCoordinator:
     def __init__(self):
         self.current_session = None
+        self.key_registry = KeyRegistry()
 
     def set_state(self,new_state):
         self.current_session.state = new_state

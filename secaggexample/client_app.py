@@ -11,7 +11,9 @@ from .dataset_logger import save_training_sample
 import time
 from .attack import apply_attack
 import random
-
+# =========================================================================
+from protocol.client_protocol import CLientProtocol
+from protocol.transport import Transport
 
 #Trainig data
 
@@ -25,6 +27,12 @@ def train(msg:Message,context:Context):
     paramters = arrays.to_numpy_ndarrays()
     set_parameters(model, paramters)
     partition_id = context.node_config["partition-id"]
+
+    # CLIENT PROTOCOL PART
+    protocol = CLientProtocol(partition_id=partition_id)
+    public_key = Transport.encode_bytes(protocol.generate_public_key())
+
+    #Creating the record for the public key and adding it to the Metrics so that it could be sent to the server
     
     #====================================================
     # GET CURRENT ROUND
@@ -129,7 +137,7 @@ def train(msg:Message,context:Context):
         "avg_connections": float(avg_connections),
 
         "training_time": float(training_time),
-
+        "public_key": public_key,
     })
 
     content = RecordDict({
