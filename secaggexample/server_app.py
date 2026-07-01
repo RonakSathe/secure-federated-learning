@@ -40,7 +40,7 @@ def main(grid:Grid,context:Context):
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
-        num_rounds=10,
+        num_rounds=2,
     )
 
     print("\nEVALUATE METRICS CLIENT APP")

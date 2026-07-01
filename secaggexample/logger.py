@@ -3,7 +3,7 @@ from pathlib import Path
 
 from filelock import FileLock
 
-from .security import calculate_risk
+from secaggexample.risk_functionality import calculate_risk
 
 
 BASE_DIR = Path(__file__).parent.parent
