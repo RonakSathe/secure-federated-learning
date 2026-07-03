@@ -1,26 +1,28 @@
 from protocol.masking import generate_mask
 from protocol.context import MaskContext
 from protocol.results import MaskResult
+from protocol.masking_context import MaskingContext
 class MaskingEngine:
-    def mask_parameters(self,parameters,shared_secret,session_id,round_number,session_salt):
+    def mask_parameters(self,parameters,context:MaskingContext):
         results = []
         for layer_id, parameter in enumerate(parameters):
-            context = MaskContext(
-                session_id=session_id,
-                round_number=round_number,
+            layer_context = MaskContext(
+                session_id=context.session_id,
+                round_number=context.round_number,
                 layer_id=layer_id,
-                salt=session_salt,
+                salt=context.session_salt,
             )
             mask = generate_mask(
-                shared_secret=shared_secret,
+                shared_secret=context.shared_secret,
                 parameter=parameter,
-                context=context,
+                context=layer_context,
                 )
             result = MaskResult(
                 layer_id=layer_id,
                 original=parameter,
                 mask=mask,
-                masked=parameter+mask
+                masked=parameter+mask,
+                context=layer_context,
             )
             results.append(result)
 

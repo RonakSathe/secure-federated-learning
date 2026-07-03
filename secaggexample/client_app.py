@@ -14,6 +14,8 @@ import random
 # =========================================================================
 from protocol.client_protocol import CLientProtocol
 from protocol.transport import Transport
+from protocol.masking_context import MaskingContext
+from protocol.masking_engine import MaskingEngine
 
 #Trainig data
 
@@ -27,6 +29,30 @@ def train(msg:Message,context:Context):
     paramters = arrays.to_numpy_ndarrays()
     set_parameters(model, paramters)
     partition_id = context.node_config["partition-id"]
+
+    df = collect_batch(partition_id=partition_id)
+    #Computing Averages for further utilization for securtiy analysis
+    avg_cpu = df["cpu"].mean()
+    avg_memory = df["memory"].mean()
+    avg_connections = df["connections"].mean()
+    avg_bytes_sent = df["bytes_sent"].mean()
+    avg_bytes_recv = df["bytes_recv"].mean()
+    X,y = dataframe_to_xy(df)
+    old_params = get_parameters(model)
+    start_time = time.time()
+    train_model(model,X,y)
+    training_time = time.time() - start_time
+    #Creating one Malicious client for the test: unnatural behavious
+    attacker_ids = random.sample(range(10),3)
+    # attacker_ids = []
+    attack_type = "normal"
+    if partition_id in attacker_ids:
+        attack_type = apply_attack(model)
+        label = 1
+    else: label = 0
+
+    new_params = get_parameters(model)
+    
 
     # CLIENT PROTOCOL PART
     protocol = CLientProtocol(partition_id=partition_id)
@@ -44,15 +70,45 @@ def train(msg:Message,context:Context):
     peer_node = config.get("protocol-peer-node")
     peer_public_key = config.get("protocol-peer-public-key")
 
-    if peer_node is not None and peer_public_key is not None:
+
+
+#=======================================================================
+    # if peer_node is not None and peer_public_key is not None:
+    if peer_node is not None and peer_public_key is not None:    
+        print("\n\n=================Inside the if Block of CLient===========")
         peer_public_key = Transport.decode_bytes(peer_public_key)
         protocol.receive_peer_public_key(peer_node=peer_node,public_key=peer_public_key)
         shared_secret = protocol.compute_shared_secret()
         print("="*50)
         print(f"[Client {partition_id}] Shared Secret: {shared_secret.hex()[:32]}...")
         print("="*50)
+        
+        mask_context = MaskingContext(
+            shared_secret=shared_secret,
+            session_id=session_id,
+            round_number=server_round,
+            session_salt=session_salt,
+            )
+        print(f"\n THe mask_context: {mask_context}")
+        engine = MaskingEngine()
+        mask_results = engine.mask_parameters(parameters=new_params,context=mask_context)
+        masked_parameters = [result.masked for result in mask_results]
+        # updated = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
+        print("\n================MASKING====================")
+        for i, result in enumerate(mask_results):
+            print(f"Layer {i}")
+            print(f"Original norm: {np.linalg.norm(result.original)}")
+            print(f"Mask norm: {np.linalg.norm(result.mask)}")
+            print(f"Masked norm: {np.linalg.norm(result.masked)}")
+            print("-"*40)
+        updated = ArrayRecord.from_numpy_ndarrays(masked_parameters)        
+    
+        # difference = np.linalg.norm(masked_parameters[0]-new_params[0])
+        # print(f"Mask Difference: {difference:.6f}")
     else:
         print("[Client] waiting for peer information")
+        print("[Client] Sending Original Parameter. \n")
+        updated = ArrayRecord.from_numpy_ndarrays(new_params)
 
     print("\n==============PROTOCOL CONFIG ====================")
 
@@ -61,38 +117,9 @@ def train(msg:Message,context:Context):
     print("ROund: ",server_round)
     print("Salt: ",session_salt.hex()[:32],"...")
     print("\nxxxxxxxxxxxxxxxxEND CONFIG xxxxxxxxxxxxxxxxxxxxxx")
-
-
     random.seed(server_round)
-    
-    df = collect_batch(partition_id=partition_id)
-
-    #Computing Averages for further utilization for securtiy analysis
-    avg_cpu = df["cpu"].mean()
-    avg_memory = df["memory"].mean()
-    avg_connections = df["connections"].mean()
-    avg_bytes_sent = df["bytes_sent"].mean()
-    avg_bytes_recv = df["bytes_recv"].mean()
-
-
-    X,y = dataframe_to_xy(df)
       
 
-      
-    old_params = get_parameters(model)
-    start_time = time.time()
-    train_model(model,X,y)
-    training_time = time.time() - start_time
-    #Creating one Malicious client for the test: unnatural behavious
-    attacker_ids = random.sample(range(10),3)
-    # attacker_ids = []
-    attack_type = "normal"
-    if partition_id in attacker_ids:
-        attack_type = apply_attack(model)
-        label = 1
-    else: label = 0
-
-    new_params = get_parameters(model)
     print("Labels:", np.unique(y))
     print("Label counts:")
     print(pd.Series(y).value_counts())
@@ -144,8 +171,7 @@ def train(msg:Message,context:Context):
     coef_norm = np.linalg.norm(model.coef_)
     if coef_norm > 10:
         model.coef_ = model.coef_ *(10/coef_norm)
-
-    updated = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
+    
 
     metrics = MetricRecord({
         "num-examples": len(X),
@@ -170,6 +196,7 @@ def train(msg:Message,context:Context):
         "metrics": metrics,
     })
     return Message(content=content,reply_to=msg)
+
 
 @app.evaluate()
 def evaluate(msg:Message,context:Context):
