@@ -470,5 +470,85 @@
     "12828088849066104032": {
         "partition_id": 8,
         "last_round": 2
+    },
+    "6913533029437987343": {
+        "partition_id": 0,
+        "last_round": 2
+    },
+    "16196393768224691432": {
+        "partition_id": 1,
+        "last_round": 2
+    },
+    "12415944678466356637": {
+        "partition_id": 2,
+        "last_round": 2
+    },
+    "14654880286147608704": {
+        "partition_id": 3,
+        "last_round": 2
+    },
+    "12073793182964192425": {
+        "partition_id": 4,
+        "last_round": 2
+    },
+    "15170133162524270459": {
+        "partition_id": 5,
+        "last_round": 2
+    },
+    "5552342359588509937": {
+        "partition_id": 7,
+        "last_round": 2
+    },
+    "9605014103240306715": {
+        "partition_id": 6,
+        "last_round": 2
+    },
+    "1188623109022975840": {
+        "partition_id": 8,
+        "last_round": 2
+    },
+    "6460532449935244895": {
+        "partition_id": 9,
+        "last_round": 2
+    },
+    "6383104546512392280": {
+        "partition_id": 2,
+        "last_round": 2
+    },
+    "14385053791095714899": {
+        "partition_id": 0,
+        "last_round": 2
+    },
+    "15741046116230180735": {
+        "partition_id": 1,
+        "last_round": 2
+    },
+    "16821036390037104352": {
+        "partition_id": 3,
+        "last_round": 2
+    },
+    "9251281509621764756": {
+        "partition_id": 6,
+        "last_round": 2
+    },
+    "5347782735507831400": {
+        "partition_id": 4,
+        "last_round": 2
+    },
+    "1439497231367474867": {
+        "partition_id": 5,
+        "last_round": 2
+    },
+    "10847785106872601689": {
+        "partition_id": 7,
+        "last_round": 2
+    },
+    "9074396700906981592": {
+        "partition_id": 9,
+        "last_round": 2
+    },
+    "11272902676630316376": {
+        "partition_id": 8,
+        "last_round": 2
     }
 }

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from flwr.serverapp.strategy import FedAvg
 from flwr.serverapp.strategy.strategy_utils import sample_nodes
-from flwr.common import log, RecordDict,MessageType
+from flwr.common import log, RecordDict,MessageType,ConfigRecord,Message
 from logging import INFO
 #testing 
 from protocol.coordinator import ProtocolCoordinator
@@ -13,6 +13,35 @@ class SecureFedAvg(FedAvg):
    def __init__(self,*args,**kwargs):
        super().__init__(*args,**kwargs)
        self.coordinator = ProtocolCoordinator()
+   
+   
+   def _construct_protocol_messages(self,arrays,base_config,node_ids,server_round):
+       messages = []
+       session = self.coordinator.current_session
+       for node_id in node_ids:
+           config = ConfigRecord(dict(base_config))
+           config["server-round"] = server_round
+           config["protocol-session-id"] = session.session_id
+           config["protocol-session-salt"] = Transport.encode_bytes(session.session_salt)
+           peer_node = session.peer_assignments.get(node_id)
+           if peer_node is not None:
+               peer_packet = session.public_keys.get(peer_node)
+               if peer_packet is not None:
+                   config["protocol-peer-node"] = int(peer_node)
+                   config["protocol-peer-public-key"] = (Transport.encode_bytes(peer_packet.public_key))
+                   print(f"[Server] Node: {node_id} gets Peer: {peer_node}")
+               else:
+                   print(f"[Server] Peer Key for Node: {peer_node} not available yet")
+           record = RecordDict({
+               self.arrayrecord_key:arrays,
+               self.configrecord_key:config
+           })
+           message = Message(content=record,message_type=MessageType.TRAIN,dst_node_id=node_id)
+           messages.append(message)
+       return messages
+
+
+
 
    
    def configure_train(self, server_round, arrays, config, grid):
@@ -64,8 +93,9 @@ class SecureFedAvg(FedAvg):
                 continue
             allowed_node_ids.append(node_id)
 
-        session = self.coordinator.create_session(
-            round_number=server_round,participants=allowed_node_ids
+        session = self.coordinator.start_round(
+            round_number=server_round,
+            participants=allowed_node_ids,
         )
         
         print("\n\n Allowed Nodes:")
@@ -89,13 +119,14 @@ class SecureFedAvg(FedAvg):
 
         # Always inject current server round
         config["server-round"] = server_round
-
-        # Construct messages
-        record = RecordDict(
-            {self.arrayrecord_key: arrays, self.configrecord_key: config}
+        
+        # return
+        return self._construct_protocol_messages(
+            arrays=arrays,
+            base_config=config,
+            node_ids=allowed_node_ids,
+            server_round=server_round,
         )
-        return self._construct_messages(record=record, node_ids=allowed_node_ids,message_type=MessageType.TRAIN)
-   
 
    #Validating replies, Updated nodes -? parition mapping, debigguing information, delegating agregatio nto fedavg.
    def aggregate_train(self,server_round,replies):
@@ -131,6 +162,7 @@ class SecureFedAvg(FedAvg):
         for node,packet in self.coordinator.current_session.public_keys.items():
             print(f"Node: {node}, Session: {packet.session_id} : Key: {packet.public_key.hex()[:32]}")
 
+        print(f"Public Keys Stored: {len(self.coordinator.current_session.public_keys)}")
         with open(mapping_file,"w") as f: json.dump(mapping,f,indent=4)
         print("\n\n =========NODE Mapping ================")
         for node, info in mapping.items():

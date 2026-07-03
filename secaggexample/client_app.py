@@ -38,6 +38,31 @@ def train(msg:Message,context:Context):
     # GET CURRENT ROUND
     #====================================================
     server_round = msg.content["config"]["server-round"]
+    config = msg.content["config"]
+    session_id = config["protocol-session-id"]
+    session_salt = Transport.decode_bytes(config["protocol-session-salt"])
+    peer_node = config.get("protocol-peer-node")
+    peer_public_key = config.get("protocol-peer-public-key")
+
+    if peer_node is not None and peer_public_key is not None:
+        peer_public_key = Transport.decode_bytes(peer_public_key)
+        protocol.receive_peer_public_key(peer_node=peer_node,public_key=peer_public_key)
+        shared_secret = protocol.compute_shared_secret()
+        print("="*50)
+        print(f"[Client {partition_id}] Shared Secret: {shared_secret.hex()[:32]}...")
+        print("="*50)
+    else:
+        print("[Client] waiting for peer information")
+
+    print("\n==============PROTOCOL CONFIG ====================")
+
+    print("Partition: ",partition_id)
+    print("Sesion Id:", session_id)
+    print("ROund: ",server_round)
+    print("Salt: ",session_salt.hex()[:32],"...")
+    print("\nxxxxxxxxxxxxxxxxEND CONFIG xxxxxxxxxxxxxxxxxxxxxx")
+
+
     random.seed(server_round)
     
     df = collect_batch(partition_id=partition_id)

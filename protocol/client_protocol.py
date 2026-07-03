@@ -21,3 +21,23 @@ class CLientProtocol:
         print(f"Partition : {self.partition_id} with Public Key: {key.hex()}")
         return key
     
+    def receive_peer_public_key(self,peer_node,public_key):
+        self.peer_node = peer_node
+        self.peer_public_key = public_key
+
+        print(f"[Client]: {self.partition_id} received public key from Peer: {peer_node}")
+
+    def compute_shared_secret(self):
+        if self.peer_public_key is None:
+            raise RuntimeError("Peer Public key is not received")
+        
+        self.shared_secret = self.key_manager.compute_shared_secret(self.peer_public_key)
+        return self.shared_secret
+
+    def print_shared_secret(self):
+        secret = self.compute_shared_secret()
+        print()
+        print(f"[Client]: {self.partition_id} SHared Secret")
+        print(secret.hex())
+        return secret
+    
