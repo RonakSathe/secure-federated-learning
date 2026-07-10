@@ -2,6 +2,8 @@ import random
 
 class PeerAssignmentEngine:
     def assign(self,participants):
+
+        # participants are the allowed node ids
         participants = participants.copy()
         random.shuffle(participants)
         pairs={}

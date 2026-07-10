@@ -11,11 +11,8 @@ from .dataset_logger import save_training_sample
 import time
 from .attack import apply_attack
 import random
-# =========================================================================
 from protocol.client_protocol import CLientProtocol
-from protocol.transport import Transport
-from protocol.masking_context import MaskingContext
-from protocol.masking_engine import MaskingEngine
+from protocol.secure_aggregation_engine import SecureAggregationEngine
 
 #Trainig data
 
@@ -56,66 +53,27 @@ def train(msg:Message,context:Context):
 
     # CLIENT PROTOCOL PART
     protocol = CLientProtocol(partition_id=partition_id)
-    public_key = Transport.encode_bytes(protocol.generate_public_key())
-
-    #Creating the record for the public key and adding it to the Metrics so that it could be sent to the server
-    
-    #====================================================
-    # GET CURRENT ROUND
-    #====================================================
+    secure_engine = SecureAggregationEngine(protocol=protocol)
     server_round = msg.content["config"]["server-round"]
     config = msg.content["config"]
-    session_id = config["protocol-session-id"]
-    session_salt = Transport.decode_bytes(config["protocol-session-salt"])
-    peer_node = config.get("protocol-peer-node")
-    peer_public_key = config.get("protocol-peer-public-key")
-
-
+    masked_parameters, public_key = (secure_engine.secure_upload(parameters=paramters,config=config))
+    updated = ArrayRecord.from_numpy_ndarrays(masked_parameters)
 
 #=======================================================================
     # if peer_node is not None and peer_public_key is not None:
-    if peer_node is not None and peer_public_key is not None:    
-        print("\n\n=================Inside the if Block of CLient===========")
-        peer_public_key = Transport.decode_bytes(peer_public_key)
-        protocol.receive_peer_public_key(peer_node=peer_node,public_key=peer_public_key)
-        shared_secret = protocol.compute_shared_secret()
-        print("="*50)
-        print(f"[Client {partition_id}] Shared Secret: {shared_secret.hex()[:32]}...")
-        print("="*50)
-        
-        mask_context = MaskingContext(
-            shared_secret=shared_secret,
-            session_id=session_id,
-            round_number=server_round,
-            session_salt=session_salt,
-            )
-        print(f"\n THe mask_context: {mask_context}")
-        engine = MaskingEngine()
-        mask_results = engine.mask_parameters(parameters=new_params,context=mask_context)
-        masked_parameters = [result.masked for result in mask_results]
-        # updated = ArrayRecord.from_numpy_ndarrays(get_parameters(model))
-        print("\n================MASKING====================")
-        for i, result in enumerate(mask_results):
-            print(f"Layer {i}")
-            print(f"Original norm: {np.linalg.norm(result.original)}")
-            print(f"Mask norm: {np.linalg.norm(result.mask)}")
-            print(f"Masked norm: {np.linalg.norm(result.masked)}")
-            print("-"*40)
-        updated = ArrayRecord.from_numpy_ndarrays(masked_parameters)        
-    
-        # difference = np.linalg.norm(masked_parameters[0]-new_params[0])
-        # print(f"Mask Difference: {difference:.6f}")
-    else:
-        print("[Client] waiting for peer information")
-        print("[Client] Sending Original Parameter. \n")
-        updated = ArrayRecord.from_numpy_ndarrays(new_params)
+    # if peer_node is not None and peer_public_key is not None:    
+    #     print("\n\n=================Inside the if Block of CLient===========")
+    #     peer_public_key = Transport.decode_bytes(peer_public_key)
+    #     protocol.receive_peer_public_key(peer_node=peer_node,public_key=peer_public_key)
+    #     shared_secret = protocol.compute_shared_secret()
+    #     print("="*50)
+    #     print(f"[Client {partition_id}] Shared Secret: {shared_secret.hex()[:32]}...")
+    #     print("="*50)
 
-    print("\n==============PROTOCOL CONFIG ====================")
+
 
     print("Partition: ",partition_id)
-    print("Sesion Id:", session_id)
-    print("ROund: ",server_round)
-    print("Salt: ",session_salt.hex()[:32],"...")
+    print("Round: ",server_round)
     print("\nxxxxxxxxxxxxxxxxEND CONFIG xxxxxxxxxxxxxxxxxxxxxx")
     random.seed(server_round)
       

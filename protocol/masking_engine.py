@@ -2,6 +2,7 @@ from protocol.masking import generate_mask
 from protocol.context import MaskContext
 from protocol.results import MaskResult
 from protocol.masking_context import MaskingContext
+from protocol.pairwise_mask import generate_pairwise_mask
 class MaskingEngine:
     def mask_parameters(self,parameters,context:MaskingContext):
         results = []
@@ -12,10 +13,16 @@ class MaskingEngine:
                 layer_id=layer_id,
                 salt=context.session_salt,
             )
-            mask = generate_mask(
+            print("="*60)
+            print("Shared Secret: ", context.shared_secret)
+            print("Type: ", type(context.shared_secret))
+            print("="*60)
+            mask = generate_pairwise_mask(
                 shared_secret=context.shared_secret,
                 parameter=parameter,
                 context=layer_context,
+                my_node_id=context.my_node_id,
+                peer_node_id=context.peer_node_id,
                 )
             result = MaskResult(
                 layer_id=layer_id,

@@ -8,7 +8,9 @@ class KeyRegistry:
     
     def register_key(self,session:ProtocolSession,packet:PublicKeyPacket):
         session.public_keys[packet.node_id] = packet
-        print(f"Registered public key for node: {packet.node_id}")
+        # print(f"Session Object: {id(session)}")
+        # print(f"Public Key dict: {id(session.public_keys)}")
+        # print(f"Registered public key for node: {packet.node_id}")
     
     def contains(self,session,node_id):
         return node_id in session.public_keys
